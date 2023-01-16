@@ -20,7 +20,7 @@
 
 char ANIMATION_MANIFEST_FILE[30];
 
-// Conditional Manifest
+// Conditional Manifest for SquachWare
 
 void animation_manifest_set()
 {
