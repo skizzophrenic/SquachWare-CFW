@@ -1,50 +1,31 @@
-<picture>
-    <source media="(prefers-color-scheme: dark)" srcset="/.github/assets/dark_theme_banner.png">
-    <source media="(prefers-color-scheme: light)" srcset="/.github/assets/light_theme_banner.png">
-    <img
-        alt="SquachWare Community Firmware!"
-        src="(https://user-images.githubusercontent.com/16942638/209824667-89df7a04-10e8-4db4-8fa7-be97afa0cbd4.jpg">
-</picture>
+![SquachWare](https://user-images.githubusercontent.com/16942638/211815956-4dd70fca-97d8-49c5-a98b-08f2c7fa8786.jpg)
+
 
 # SquachWare Community Firmware
-This is just a placeholder while we get things started!!
+SquachWare is a community driven firmware!  Our goal is to creat a firmware that has 98% of the functionality of other custom firmwares, but also be 100% legal in the process!  After having use all of the other custom firmwares, we realized that most people don't even use features that require unlocking the region lock, and we certainly don't want to include illegal addon files!  Enjoy a stable branch of the Developer branch of Official Firmware, packed with custom graphics, applications, badUSB files, IR files, SubGhz files and more!!!
 
 FULL DOCUMENTATION INCLUDING LINKS TO ALL AUTHORS WILL BE DONE SHORTLY.
 Right now I'm just getting the basics all sorted out!
 
-# Flipper Zero Firmware
+# How to Install
+Just watch this video : https://youtu.be/A1SuDfFjUho
+Follow the same instructions as far as installing RogueMaster:
 
-- [Flipper Zero Official Website](https://flipperzero.one). A simple way to explain to your friends what the Flipper Zero can do
-- [Flipper Zero Firmware Update](https://update.flipperzero.one). Improvements for your dolphin: latest firmware releases, upgrade tools for PC and Mobile devices
-- [User Documentation](https://docs.flipperzero.one). Learn more about your dolphin: specs, usage guides, and everything that you wanted to ask
+Download Zip (or tgz) file from the Releases link https://github.com/skizzophrenic/SquachWare-CFW/releases/
+- Extract the compressed file into a folder
+- Drag that folder into the Update folder on your Flipper Zero (If you don't have one, just create a folder named Update)
+- On your Flipper, press down then left to access the browser
+- Navigate to Update
+- Find the folder that you just dropped into the Update folder and open it
+- Find the file named Update and run it
+- Wait for it to install and you're done!
 
 # Contributing
 
-Our main goal is to build a healthy, sustainable community around the Flipper and be open to any new ideas and contributions. We also have some rules and taboos here, so please read this page and our [Code Of Conduct](/CODE_OF_CONDUCT.md) carefully.
+If you'd like to contribute to this project, the best way to start would be to join the Squachtopia Hangout Discord server! https://discord.gg/squachtopia
 
-## I need help
 
-The best place to search for answers is our [User Documentation](https://docs.flipperzero.one). If you can't find the answer there, you can check our [Discord Server](https://flipp.dev/discord) or our [Forum](https://forum.flipperzero.one/).
-
-## I want to report an issue
-
-If you've found an issue and want to report it, please check our [Issues](https://github.com/flipperdevices/flipperzero-firmware/issues) page. Make sure that the description contains information about the firmware version you're using, your platform, and the proper steps to reproduce the issue.
-
-## I want to contribute code
-
-Before opening a PR, please confirm that your changes must be contained in the firmware. Many ideas can easily be implemented as external applications and published in the Flipper Application Catalog (coming soon). If you are unsure, you can ask on the [Discord Server](https://flipp.dev/discord) or the [Issues](https://github.com/flipperdevices/flipperzero-firmware/issues) page, and we'll help you find the right place for your code.
-
-Also, please read our [Contribution Guide](/CONTRIBUTING.md), and our [Coding Style](/CODING_STYLE.md), and ensure that your code is compatible with our project [License](/LICENSE).
-
-Finally, open a [Pull Request](https://github.com/flipperdevices/flipperzero-firmware/pulls) and ensure that CI/CD statuses are all green.
-
-# Development
-
-The Flipper Zero Firmware is written in C, with some bits and pieces written in C++ and armv7m assembly languages. An intermediate level of C knowledge is recommended for comfortable programming. For Flipper applications, we support C, C++, and armv7m assembly languages.
-
-## Requirements
-
-Supported development platforms:
+# Supported development platforms:
 
 - Windows 10+ with PowerShell and Git (x86_64)
 - macOS 12+ with Command Line tools (x86_64, arm64)
@@ -63,8 +44,7 @@ Everything else will be taken care of by Flipper Build System.
 Ensure that you have enough space and clone source code with Git:
 
 ```shell
-git clone --recursive https://github.com/flipperdevices/flipperzero-firmware.git
-```
+git clone --recursive https://github.com/skizzophrenic/SquachWare-CFW.git
 
 ## Building
 
@@ -102,10 +82,9 @@ Ensure that your Flipper is working, connect it using a USB cable and flash firm
 
 # Links
 
-- Discord: [flipp.dev/discord](https://flipp.dev/discord)
-- Website: [flipperzero.one](https://flipperzero.one)
-- Forum: [forum.flipperzero.one](https://forum.flipperzero.one/)
-- Kickstarter: [kickstarter.com](https://www.kickstarter.com/projects/flipper-devices/flipper-zero-tamagochi-for-hackers)
+- Discord: https://discord.gg/squachtopia
+- Website: http://talkingsasquach.com (soon)
+
 
 # Project structure
 
