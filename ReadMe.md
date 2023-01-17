@@ -18,8 +18,9 @@ Right now I'm just getting the basics all sorted out!
 ## Included applications
 Included apps and respective credit to said authers and contributors can be found here:
 
-[Kyhwana](https://github.com/kyhwana/latest_flipper_zero_apps)
-[UberGuidoZ/Alexei Humeniy](https://github.com/UberGuidoZ/Flipper/tree/main/Applications/Official)
+- [Kyhwana](https://github.com/kyhwana/latest_flipper_zero_apps)
+
+- [UberGuidoZ/Alexei Humeniy](https://github.com/UberGuidoZ/Flipper/tree/main/Applications/Official)
 
 
 # How to Install
