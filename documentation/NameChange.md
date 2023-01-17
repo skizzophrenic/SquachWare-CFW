@@ -1,7 +1,7 @@
 ## To rename your flipper follow the steps below!
-- This is our current flipper name.
 <br>
 
+- This is our current flipper name.
 ![Default](https://user-images.githubusercontent.com/19293864/212785037-1ff16131-530f-45a9-992b-f2fb7d0a9567.png)
 
 <br>
