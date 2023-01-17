@@ -1,3 +1,14 @@
+# Supported development platforms:
+- Windows 10+ with PowerShell and Git (x86_64)
+- macOS 12+ with Command Line tools (x86_64, arm64)
+- Ubuntu 20.04+ with build-essential and Git (x86_64)
+
+Supported in-circuit debuggers (optional but highly recommended):
+
+- [Flipper Zero Wi-Fi Development Board](https://shop.flipperzero.one/products/wifi-devboard)
+- ST-Link
+- J-Link
+
 ## Cloning Source Code
 
 Ensure that you have enough space and clone source code with Git:
