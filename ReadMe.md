@@ -7,6 +7,11 @@ SquachWare is a community driven firmware!  Our goal is to creat a firmware that
 FULL DOCUMENTATION INCLUDING LINKS TO ALL AUTHORS WILL BE DONE SHORTLY.
 Right now I'm just getting the basics all sorted out!
 
+# Changes
+
+- Added Cart Lock/Unlock WAVs
+
+
 # How to Install
 Just watch this video : https://youtu.be/A1SuDfFjUho
 Follow the same instructions as far as installing RogueMaster:
@@ -16,7 +21,7 @@ Download Zip (or tgz) file from the Releases link https://github.com/skizzophren
 - Drag that folder into the Update folder on your Flipper Zero (If you don't have one, just create a folder named Update)
 - On your Flipper, press down then left to access the browser
 - Navigate to Update
-- Find the folder that you just dropped into the Update folder and open it
+- Find the folder that you just dropped into the Update folder .and open it
 - Find the file named Update and run it
 - Wait for it to install and you're done!
 
@@ -38,37 +43,9 @@ Supported in-circuit debuggers (optional but highly recommended):
 - J-Link
 
 Everything else will be taken care of by Flipper Build System.
-
-## Cloning Source Code
-
-Ensure that you have enough space and clone source code with Git:
-
-```shell
-git clone --recursive https://github.com/skizzophrenic/SquachWare-CFW.git
-
-## Building
-
-Build firmware using Flipper Build Tool:
-
-```shell
-./fbt
-```
-
-## Flashing Firmware using an in-circuit debugger
-
-Connect your in-circuit debugger to the Flipper and flash firmware using Flipper Build Tool:
-
-```shell
-./fbt flash
-```
-
-## Flashing Firmware using USB
-
-Ensure that your Flipper is working, connect it using a USB cable and flash firmware using Flipper Build Tool:
-
-```shell
-./fbt flash_usb
-```
+# Instructions
+- [- How to clone/build firmware](https://github.com/skizzophrenic/SquachWare-CFW/tree/dev/documentation/CloneFW.md)
+- [- How to change Flipper name](https://github.com/skizzophrenic/SquachWare-CFW/tree/dev/documentation/NameChange.md)
 
 ## Documentation
 
