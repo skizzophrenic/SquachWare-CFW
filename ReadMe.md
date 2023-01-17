@@ -10,7 +10,7 @@ Right now I'm just getting the basics all sorted out!
 # Changes
 **Version 0.13**
 - Added Savable Tamagotchi.
-- Added SFrench Canadian badUSB layouts.
+- Added French Canadian badUSB layouts.
 
 **Version 0.12**
 - Added Cart Lock/Unlock WAVs
@@ -62,10 +62,10 @@ Everything else will be taken care of by Flipper Build System.
 - And much more in the [Documentation](/documentation) folder
 
 # Links
-<a href="https://discord.gg/squachtopia"><img src="https://img.shields.io/discord/546482206638473231?style=plastic"a>
 
-![Discord](https://img.shields.io/discord/546482206638473231?style=plastic)
+- Discord: https://discord.gg/squachtopia
 - Website: http://talkingsasquach.com (soon)
+
 
 # Project structure
 
