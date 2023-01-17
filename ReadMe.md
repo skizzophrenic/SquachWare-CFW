@@ -48,8 +48,8 @@ Supported in-circuit debuggers (optional but highly recommended):
 
 Everything else will be taken care of by Flipper Build System.
 # Instructions
-- [How to clone/build firmware](https://github.com/CanadianSike/SquachWare-CFW/blob/dev/documentation/CloneFW.md) - How to clone the repo and build/modify your own firmware using SWCFW as a base.
-- [How to change Flipper name](https://github.com/CanadianSike/SquachWare-CFW/blob/dev/documentation/NameChange.md) - Change the name of your flipper!
+- [Clone/Build firmware](https://github.com/CanadianSike/SquachWare-CFW/blob/dev/documentation/CloneFW.md) - How to clone the repo and build/modify your own firmware using SW-CFW as a base.
+- [Rename Flipper](https://github.com/CanadianSike/SquachWare-CFW/blob/dev/documentation/NameChange.md) - Change the name of your Flipper quickly and easily!
 
 ## Documentation
 
