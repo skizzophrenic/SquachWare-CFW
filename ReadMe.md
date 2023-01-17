@@ -62,6 +62,7 @@ Everything else will be taken care of by Flipper Build System.
 - And much more in the [Documentation](/documentation) folder
 
 # Links
+<a href="https://discord.gg/squachtopia"><img src="https://img.shields.io/discord/546482206638473231?style=plastic"a>
 ![Discord](https://img.shields.io/discord/546482206638473231?style=plastic)
 - Website: http://talkingsasquach.com (soon)
 
