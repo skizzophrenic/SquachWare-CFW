@@ -24,6 +24,8 @@ Build firmware using Flipper Build Tool:
 ```shell
 ./fbt
 ```
+Everything else will be taken care of by Flipper Build System.
+You can find your compiled firmware in the /dist folder when finished!
 
 ## Flashing Firmware using an in-circuit debugger
 

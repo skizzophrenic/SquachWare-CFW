@@ -40,7 +40,6 @@ Download Zip (or tgz) file from the Releases link https://github.com/skizzophren
 # Contributing
 If you'd like to contribute to this project, the best way to start would be to join the Squachtopia Hangout Discord server! https://discord.gg/squachtopia
 
-Everything else will be taken care of by Flipper Build System.
 
 # Instructions/Documentation
 - [Clone/Build firmware](https://github.com/CanadianSike/SquachWare-CFW/blob/dev/documentation/CloneFW.md) - How to clone the repo and build/modify your own firmware using SW-CFW as a base.
