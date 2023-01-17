@@ -42,9 +42,9 @@ If you'd like to contribute to this project, the best way to start would be to j
 
 
 # Instructions/Documentation
-- [Clone/Build firmware](https://github.com/CanadianSike/SquachWare-CFW/blob/dev/documentation/CloneFW.md) - How to clone the repo and build/modify your own firmware using SW-CFW as a base.
-- [Rename Flipper](https://github.com/CanadianSike/SquachWare-CFW/blob/dev/documentation/NameChange.md) - Change the name of your Flipper quickly and easily!
-- [Official Documentation](https://github.com/CanadianSike/SquachWare-CFW/blob/dev/documentation/OfficialDocumentation.md) - Documentation provided by the Flipper team!
+- [Clone/Build firmware](https://github.com/skizzophrenic/SquachWare-CFW/blob/dev/documentation/CloneFW.md) - How to clone the repo and build/modify your own firmware using SW-CFW as a base.
+- [Rename Flipper](https://github.com/skizzophrenic/SquachWare-CFW/blob/dev/documentation/NameChange.md) - Change the name of your Flipper quickly and easily!
+- [Official Documentation](https://github.com/skizzophrenic/SquachWare-CFW/blob/dev/documentation/OfficialDocumentation.md) - Documentation provided by the Flipper team!
 
 # Links
 - Discord: https://discord.gg/squachtopia
