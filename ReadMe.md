@@ -22,6 +22,7 @@ Included apps and respective credit to said authers and contributors can be foun
 
 - [UberGuidoZ/Alexei Humeniy](https://github.com/UberGuidoZ/Flipper/tree/main/Applications/Official)
 
+Current application count: 70+
 
 # How to Install
 Just watch this video : https://youtu.be/A1SuDfFjUho
@@ -32,7 +33,7 @@ Download Zip (or tgz) file from the Releases link https://github.com/skizzophren
 - Drag that folder into the Update folder on your Flipper Zero (If you don't have one, just create a folder named Update)
 - On your Flipper, press down then left to access the browser
 - Navigate to Update
-- Find the folder that you just dropped into the Update folder .and open it
+- Find the folder that you just dropped into the Update folder and open it
 - Find the file named Update and run it
 - Wait for it to install and you're done!
 
