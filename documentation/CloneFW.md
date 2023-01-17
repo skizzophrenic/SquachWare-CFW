@@ -4,6 +4,7 @@ Ensure that you have enough space and clone source code with Git:
 
 ```shell
 git clone --recursive https://github.com/skizzophrenic/SquachWare-CFW.git
+```
 
 ## Building
 
@@ -27,4 +28,28 @@ Ensure that your Flipper is working, connect it using a USB cable and flash firm
 
 ```shell
 ./fbt flash_usb
+```
+
+## Build Update Package
+
+Compile as an update package to run off the SDCard:
+
+```shell
+./fbt update_package
+```
+
+## Build FAPs 
+
+Compile ONLY Flipper applications into FAP format:
+
+```shell
+./fbt fap_dist
+```
+
+## Build assets
+
+Compile your personal assests for use with the flipper:
+
+```shell
+./fbt icons proto dolphin_internal dolphin_ext resources
 ```

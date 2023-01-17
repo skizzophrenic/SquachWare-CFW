@@ -15,6 +15,12 @@ Right now I'm just getting the basics all sorted out!
 **Version 0.12**
 - Added Cart Lock/Unlock WAVs
 
+## Included applications
+Included apps and respective credit to said authers and contributors can be found here:
+
+[Kyhwana](https://github.com/kyhwana/latest_flipper_zero_apps)
+[UberGuidoZ/Alexei Humeniy](https://github.com/UberGuidoZ/Flipper/tree/main/Applications/Official)
+
 
 # How to Install
 Just watch this video : https://youtu.be/A1SuDfFjUho
@@ -30,12 +36,9 @@ Download Zip (or tgz) file from the Releases link https://github.com/skizzophren
 - Wait for it to install and you're done!
 
 # Contributing
-
 If you'd like to contribute to this project, the best way to start would be to join the Squachtopia Hangout Discord server! https://discord.gg/squachtopia
 
-
 # Supported development platforms:
-
 - Windows 10+ with PowerShell and Git (x86_64)
 - macOS 12+ with Command Line tools (x86_64, arm64)
 - Ubuntu 20.04+ with build-essential and Git (x86_64)
@@ -47,28 +50,18 @@ Supported in-circuit debuggers (optional but highly recommended):
 - J-Link
 
 Everything else will be taken care of by Flipper Build System.
-# Instructions
+
+# Instructions/Documentation
 - [Clone/Build firmware](https://github.com/CanadianSike/SquachWare-CFW/blob/dev/documentation/CloneFW.md) - How to clone the repo and build/modify your own firmware using SW-CFW as a base.
 - [Rename Flipper](https://github.com/CanadianSike/SquachWare-CFW/blob/dev/documentation/NameChange.md) - Change the name of your Flipper quickly and easily!
-
-## Documentation
-
-- [Flipper Build Tool](/documentation/fbt.md) - building, flashing, and debugging Flipper software
-- [Applications](/documentation/AppsOnSDCard.md), [Application Manifest](/documentation/AppManifests.md) - developing, building, deploying, and debugging Flipper applications
-- [Hardware combos and Un-bricking](/documentation/KeyCombo.md) - recovering your Flipper from most nasty situations
-- [Flipper File Formats](/documentation/file_formats) - everything about how Flipper stores your data and how you can work with it
-- [Universal Remotes](/documentation/UniversalRemotes.md) - contributing your infrared remote to the universal remote database
-- [Firmware Roadmap](/documentation/RoadMap.md)
-- And much more in the [Documentation](/documentation) folder
+- [Official Documentation](https://github.com/CanadianSike/SquachWare-CFW/blob/dev/documentation/OfficalDocumentation.md)
 
 # Links
-
 - Discord: https://discord.gg/squachtopia
 - Website: http://talkingsasquach.com (soon)
 
 
 # Project structure
-
 - `applications`    - Applications and services used in firmware
 - `assets`          - Assets used by applications and services
 - `furi`            - Furi Core: OS-level primitives and helpers
