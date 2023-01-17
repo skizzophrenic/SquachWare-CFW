@@ -30,10 +30,11 @@
 ![Change](https://user-images.githubusercontent.com/19293864/212785184-cc043284-9092-4dbb-a9ef-bc39ab22a85c.png)
 
 <br>
-- Enter your new name, in our case its "Squachie", then hit "save".
+- Enter your new name, in our case its "Squachi3", then hit "save".
 <br>
 
-![SaveName](https://user-images.githubusercontent.com/19293864/212785517-758fe3a3-0aca-4de9-9026-43c3890b34d6.png)
+![SaveName](https://user-images.githubusercontent.com/19293864/212790756-264e2d0b-ec64-49ab-8057-726fdc3fac1d.png)
+
 
 <br>
 - Your device will then reboot.
@@ -45,7 +46,8 @@
 - Like magic you have renamed your flipper!
 <br>
 
-![SavedName](https://user-images.githubusercontent.com/19293864/212785317-4505f3cf-9fca-4dc9-8cd2-2961be926cbe.png)
+![SavedName](https://user-images.githubusercontent.com/19293864/212790887-ce20c01c-b9d4-40e3-ac91-3984166c2fb2.png)
+
 
 <br>
 - To change your name back to default select the "Revert" option in the app.
@@ -57,7 +59,7 @@
 - Your device will then reboot, again.
 <br>
 
-![Revert](https://user-images.githubusercontent.com/19293864/212785578-9083c5b5-4472-452c-96d7-715a75d6b34c.png)
+![RevertReboot](https://user-images.githubusercontent.com/19293864/212790972-26a4ddbc-c8ae-4576-a3d3-9598b7ebcf9c.png)
 
 <br>
 - Just like that we are back to our stock name!
