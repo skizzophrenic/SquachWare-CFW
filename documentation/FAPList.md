@@ -1,4 +1,4 @@
-<h2 align="center">List of FAPs Currently included</h2>
+<h2 align="center">List of FAPs/Files Currently included</h2>
 
 <br>
 
