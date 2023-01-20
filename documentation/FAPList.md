@@ -2,7 +2,16 @@
 
 <br>
 
-### 🎮 Games
+<table>
+    <tr>
+<th>🎮 Games</th>
+<th>📦 Misc</th>
+<th>🔧 Tools</th>
+<th>🔌 GPIO</th>
+<th>🎵 Music</th>
+    <tr>
+        <td>
+        
 - Arkanoid
 - BlackJack
 - Game 15
@@ -17,8 +26,7 @@
 - Yatzee
 - Zombiez
 - Snake Game
-
-### 📦 Misc
+<td>
 - Authenticator
 - Barcode generator
 - Caesar Cipher
@@ -31,8 +39,7 @@
 - USB K&M
 - Wii EC Analyser
 - Music PLayer
-
-### 🔧 Tools
+<td>
 - Count Down Timer
 - DTMF Dolphin
 - Dolphin Backup
@@ -51,8 +58,7 @@
 - PicoPass Reader
 - Protocols visualizer
 - Signal Generator
-
-### 🔌 GPIO
+<td>
 - [BH1750]Lightmeter
 - [BMI160]Air Mouse
 - [ESP32]WiFiMarauder
@@ -71,8 +77,7 @@
 - RC2014 ColecoVision
 - Temp Sensors +
 - WiFi Scanner
-
-### 🎵 Music
+<td>
 - BPM Tapper
 - Metronome
 - Morse Code
@@ -86,3 +91,5 @@
 - USB Midi
 - WAV Player
 - Zero Tracker
+</td>
+</tr>
