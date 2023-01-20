@@ -1,4 +1,4 @@
-<h2 align="center">List of FAPs Currently included</h2>
+<h2 align="center">List of FAPs/Files Currently included</h2>
 
 <br>
 
@@ -11,7 +11,7 @@
 <th>🎵 Music</th>
     <tr>
         <td>
-        
+            
 - Arkanoid
 - BlackJack
 - Game 15
@@ -26,7 +26,9 @@
 - Yatzee
 - Zombiez
 - Snake Game
+            
 <td>
+    
 - Authenticator
 - Barcode generator
 - Caesar Cipher
@@ -39,7 +41,9 @@
 - USB K&M
 - Wii EC Analyser
 - Music PLayer
+    
 <td>
+    
 - Count Down Timer
 - DTMF Dolphin
 - Dolphin Backup
@@ -58,7 +62,9 @@
 - PicoPass Reader
 - Protocols visualizer
 - Signal Generator
+    
 <td>
+    
 - [BH1750]Lightmeter
 - [BMI160]Air Mouse
 - [ESP32]WiFiMarauder
@@ -77,7 +83,9 @@
 - RC2014 ColecoVision
 - Temp Sensors +
 - WiFi Scanner
+    
 <td>
+    
 - BPM Tapper
 - Metronome
 - Morse Code
