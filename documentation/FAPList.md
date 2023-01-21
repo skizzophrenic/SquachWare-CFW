@@ -1,7 +1,6 @@
 <h2 align="center">List of FAPs/Files Currently included</h2>
 
-<br>
-
+<h4 align="center"><code>Updated for V0.13</code></h4>
 <table>
     <tr>
 <th>🎮 Games</th>
