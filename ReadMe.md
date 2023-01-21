@@ -21,7 +21,7 @@ Included apps and respective credit to said authers and contributors can be foun
 - [Kyhwana](https://github.com/kyhwana/latest_flipper_zero_apps)
 - [UberGuidoZ/Alexei Humeniy](https://github.com/UberGuidoZ/Flipper/tree/main/Applications/Official)
 
-Current application count: [70+](https://github.com/CanadianSike/SquachWare-CFW/blob/dev/documentation/FAPList.md)
+Current application count: [70+](https://github.com/skizzophrenic/SquachWare-CFW/blob/dev/documentation/FAPList.md)
 
 # How to Install
 Just watch this video : https://youtu.be/A1SuDfFjUho
