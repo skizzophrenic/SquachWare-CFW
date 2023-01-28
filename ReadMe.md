@@ -8,12 +8,12 @@ FULL DOCUMENTATION INCLUDING LINKS TO ALL AUTHORS WILL BE DONE SHORTLY.
 Right now I'm just getting the basics all sorted out!
 
 # Changes
+**Version 0.14**
+- Added Kuronons_Misc_EscapeFrom_LA Animation
+
 **Version 0.13**
 - Added Savable Tamagotchi.
 - Added French Canadian badUSB layouts.
-
-**Version 0.12**
-- Added Cart Lock/Unlock WAVs
 
 ## Included applications
 Included apps and respective credit to said authers and contributors can be found here:
