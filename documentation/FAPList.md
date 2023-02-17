@@ -69,7 +69,7 @@
 - [ESP32]WiFiMarauder
 - [ESP8266]Deauther
 - [ESP8266]IFTTT
-- [ESP8266]Deauthe V2
+- [ESP8266]Deauther V2
 - Flashlight
 - GPIO Intervalometer
 - GPIO Reader (Aurelilc)
