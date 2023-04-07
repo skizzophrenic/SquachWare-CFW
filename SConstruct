@@ -139,31 +139,41 @@ if GetOption("fullenv") or any(
 basic_dist = distenv.DistCommand("fw_dist", distenv["DIST_DEPENDS"])
 distenv.Default(basic_dist)
 
-dist_dir = distenv.GetProjetDirName()
+dist_dir_name = distenv.GetProjetDirName()
+dist_dir = distenv.Dir(f"#/dist/{dist_dir_name}")
+external_apps_artifacts = firmware_env["FW_EXTAPPS"]
+external_app_list = external_apps_artifacts.application_map.values()
+
 fap_dist = [
     distenv.Install(
-        distenv.Dir(f"#/dist/{dist_dir}/apps/debug_elf"),
-        list(
-            app_artifact.debug
-            for app_artifact in firmware_env["FW_EXTAPPS"].applications.values()
-        ),
+        dist_dir.Dir("debug_elf"),
+        list(app_artifact.debug for app_artifact in external_app_list),
     ),
-    distenv.Install(
-        f"#/dist/{dist_dir}/apps",
-        "#/assets/resources/apps",
+    *(
+        distenv.Install(
+            dist_dir.File(dist_entry[1]).dir,
+            app_artifact.compact,
+        )
+        for app_artifact in external_app_list
+        for dist_entry in app_artifact.dist_entries
     ),
 ]
 Depends(
     fap_dist,
-    list(
-        app_artifact.validator
-        for app_artifact in firmware_env["FW_EXTAPPS"].applications.values()
-    ),
+    list(app_artifact.validator for app_artifact in external_app_list),
 )
 Alias("fap_dist", fap_dist)
 # distenv.Default(fap_dist)
 
-distenv.Depends(firmware_env["FW_RESOURCES"], firmware_env["FW_EXTAPPS"].resources_dist)
+distenv.Depends(firmware_env["FW_RESOURCES"], external_apps_artifacts.resources_dist)
+
+# Copy all faps to device
+
+fap_deploy = distenv.PhonyTarget(
+    "fap_deploy",
+    "${PYTHON3} ${ROOT_DIR}/scripts/storage.py send ${SOURCE} /ext/apps",
+    source=Dir("#/assets/resources/apps"),
+)
 
 
 # Target for bundling core2 package for qFlipper
@@ -189,6 +199,20 @@ firmware_bm_flash = distenv.PhonyTarget(
     GDBFLASH=[
         "-ex",
         "load",
+        "-ex",
+        "quit",
+    ],
+)
+
+gdb_backtrace_all_threads = distenv.PhonyTarget(
+    "gdb_trace_all",
+    "$GDB $GDBOPTS $SOURCES $GDBFLASH",
+    source=firmware_env["FW_ELF"],
+    GDBOPTS="${GDBOPTS_BASE}",
+    GDBREMOTE="${OPENOCD_GDB_PIPE}",
+    GDBFLASH=[
+        "-ex",
+        "thread apply all bt",
         "-ex",
         "quit",
     ],

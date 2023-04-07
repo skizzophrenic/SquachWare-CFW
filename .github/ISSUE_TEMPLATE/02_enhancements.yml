@@ -5,7 +5,7 @@ body:
   attributes:
     value: |
       Thank you for taking the time to fill out an issue. This template is meant for feature requests and improvements to already existing functionality.
-      If you require help with the Flipper zero or SquachWare, we ask that you join [our discord](https://discord.gg/squachtopia)
+      If you require help with the Flipper zero and its firmware, we ask that you join [our forum](https://forum.flipperzero.one)
 - type: textarea
   id: proposal
   attributes:

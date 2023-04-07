@@ -1,7 +1,6 @@
 
 #include <stdint.h>
 #include <flipper_format/flipper_format.h>
-#include <furi_hal.h>
 #include <furi.h>
 #include <core/dangerous_defines.h>
 #include <storage/storage.h>
@@ -15,28 +14,8 @@
 
 #define ANIMATION_META_FILE "meta.txt"
 #define ANIMATION_DIR EXT_PATH("dolphin")
-//#define ANIMATION_MANIFEST_FILE ANIMATION_DIR "/manifest.txt"
+#define ANIMATION_MANIFEST_FILE ANIMATION_DIR "/manifest.txt"
 #define TAG "AnimationStorage"
-
-char ANIMATION_MANIFEST_FILE[30];
-
-// Conditional Manifest for SquachWare
-
-void animation_manifest_set()
-{
-	const char* my_name = furi_hal_version_get_name_ptr();
-
-	if(strcmp(my_name,"Kuro") == 0)
-	{
-		snprintf(ANIMATION_MANIFEST_FILE, sizeof(ANIMATION_DIR), "%s", ANIMATION_DIR);
-		strcat(ANIMATION_MANIFEST_FILE,"/manifest2.txt");
-	}
-	else
-	{
-		snprintf(ANIMATION_MANIFEST_FILE, sizeof(ANIMATION_DIR), "%s", ANIMATION_DIR);
-		strcat(ANIMATION_MANIFEST_FILE,"/manifest.txt");
-	}
-}
 
 static void animation_storage_free_bubbles(BubbleAnimation* animation);
 static void animation_storage_free_frames(BubbleAnimation* animation);
@@ -47,8 +26,6 @@ static bool animation_storage_load_single_manifest_info(
     StorageAnimationManifestInfo* manifest_info,
     const char* name) {
     furi_assert(manifest_info);
-	
-	animation_manifest_set();
 
     bool result = false;
     Storage* storage = furi_record_open(RECORD_STORAGE);
@@ -105,8 +82,6 @@ static bool animation_storage_load_single_manifest_info(
 void animation_storage_fill_animation_list(StorageAnimationList_t* animation_list) {
     furi_assert(sizeof(StorageAnimationList_t) == sizeof(void*));
     furi_assert(!StorageAnimationList_size(*animation_list));
-	
-	animation_manifest_set();
 
     Storage* storage = furi_record_open(RECORD_STORAGE);
     FlipperFormat* file = flipper_format_file_alloc(storage);

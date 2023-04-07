@@ -6,7 +6,7 @@ body:
   attributes:
     value: |
       Thank you for taking the time to fill out an issue, this template is meant for any feature suggestions.
-      If you require help with the Flipper zero or SquachWare, we ask that you join [our discord](https://discord.gg/squachtopia)
+      If you require help with the Flipper zero and its firmware, we ask that you join [our forum](https://forum.flipperzero.one)
 - type: textarea
   id: proposal
   attributes:
@@ -14,7 +14,7 @@ body:
     description: |
       Please describe your feature request in as many details as possible.
         - Describe what it should do.
-        - Note whetever it is to extend existing functionality or introduce new functionality.
+        - Note whether it is to extend existing functionality or introduce new functionality.
   validations:
     required: true
 - type: textarea

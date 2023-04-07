@@ -11,6 +11,7 @@ struct DictAttack {
     View* view;
     DictAttackCallback callback;
     void* context;
+    bool card_present;
 };
 
 typedef struct {
@@ -60,7 +61,13 @@ static void dict_attack_draw_callback(Canvas* canvas, void* model) {
         if(progress > 1.0) {
             progress = 1.0;
         }
-        snprintf(draw_str, sizeof(draw_str), "%d/%d", m->dict_keys_current, m->dict_keys_total);
+        if(m->dict_keys_current == 0) {
+            // Cause when people see 0 they think it's broken
+            snprintf(draw_str, sizeof(draw_str), "%d/%d", 1, m->dict_keys_total);
+        } else {
+            snprintf(
+                draw_str, sizeof(draw_str), "%d/%d", m->dict_keys_current, m->dict_keys_total);
+        }
         elements_progress_bar_with_text(canvas, 0, 20, 128, dict_progress, draw_str);
         canvas_set_font(canvas, FontSecondary);
         snprintf(draw_str, sizeof(draw_str), "Keys found: %d/%d", m->keys_found, m->keys_total);
@@ -156,6 +163,7 @@ void dict_attack_set_header(DictAttack* dict_attack, const char* header) {
 
 void dict_attack_set_card_detected(DictAttack* dict_attack, MfClassicType type) {
     furi_assert(dict_attack);
+    dict_attack->card_present = true;
     with_view_model(
         dict_attack->view,
         DictAttackViewModel * model,
@@ -169,11 +177,17 @@ void dict_attack_set_card_detected(DictAttack* dict_attack, MfClassicType type) 
 
 void dict_attack_set_card_removed(DictAttack* dict_attack) {
     furi_assert(dict_attack);
+    dict_attack->card_present = false;
     with_view_model(
         dict_attack->view,
         DictAttackViewModel * model,
         { model->state = DictAttackStateCardRemoved; },
         true);
+}
+
+bool dict_attack_get_card_state(DictAttack* dict_attack) {
+    furi_assert(dict_attack);
+    return dict_attack->card_present;
 }
 
 void dict_attack_set_sector_read(DictAttack* dict_attack, uint8_t sec_read) {

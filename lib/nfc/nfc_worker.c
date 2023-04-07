@@ -56,6 +56,8 @@ void nfc_worker_start(
     while(furi_hal_nfc_is_busy()) {
         furi_delay_ms(10);
     }
+    furi_hal_nfc_deinit();
+    furi_hal_nfc_init();
 
     nfc_worker->callback = callback;
     nfc_worker->context = context;
@@ -567,6 +569,32 @@ void nfc_worker_emulate_mf_ultralight(NfcWorker* nfc_worker) {
     }
 }
 
+static bool nfc_worker_mf_get_b_key_from_sector_trailer(
+    FuriHalNfcTxRxContext* tx_rx,
+    uint16_t sector,
+    uint64_t key,
+    uint64_t* found_key) {
+    // Some access conditions allow reading B key via A key
+
+    uint8_t block = mf_classic_get_sector_trailer_block_num_by_sector(sector);
+
+    Crypto1 crypto = {};
+    MfClassicBlock block_tmp = {};
+    MfClassicAuthContext auth_context = {.sector = sector, .key_a = MF_CLASSIC_NO_KEY, .key_b = 0};
+
+    furi_hal_nfc_sleep();
+
+    if(mf_classic_auth_attempt(tx_rx, &crypto, &auth_context, key)) {
+        if(mf_classic_read_block(tx_rx, &crypto, block, &block_tmp)) {
+            *found_key = nfc_util_bytes2num(&block_tmp.value[10], sizeof(uint8_t) * 6);
+
+            return *found_key;
+        }
+    }
+
+    return false;
+}
+
 static void nfc_worker_mf_classic_key_attack(
     NfcWorker* nfc_worker,
     uint64_t key,
@@ -610,8 +638,19 @@ static void nfc_worker_mf_classic_key_attack(
                     (uint32_t)key);
                 if(mf_classic_authenticate(tx_rx, block_num, key, MfClassicKeyA)) {
                     mf_classic_set_key_found(data, i, MfClassicKeyA, key);
-                    FURI_LOG_D(TAG, "Key found");
+                    FURI_LOG_D(
+                        TAG, "Key A found: %04lx%08lx", (uint32_t)(key >> 32), (uint32_t)key);
                     nfc_worker->callback(NfcWorkerEventFoundKeyA, nfc_worker->context);
+
+                    uint64_t found_key;
+                    if(nfc_worker_mf_get_b_key_from_sector_trailer(tx_rx, i, key, &found_key)) {
+                        FURI_LOG_D(TAG, "Found B key via reading sector %d", i);
+                        mf_classic_set_key_found(data, i, MfClassicKeyB, found_key);
+
+                        if(nfc_worker->state == NfcWorkerStateMfClassicDictAttack) {
+                            nfc_worker->callback(NfcWorkerEventFoundKeyB, nfc_worker->context);
+                        }
+                    }
                 }
             }
             if(!mf_classic_is_key_found(data, i, MfClassicKeyB)) {
@@ -623,7 +662,8 @@ static void nfc_worker_mf_classic_key_attack(
                     (uint32_t)key);
                 if(mf_classic_authenticate(tx_rx, block_num, key, MfClassicKeyB)) {
                     mf_classic_set_key_found(data, i, MfClassicKeyB, key);
-                    FURI_LOG_D(TAG, "Key found");
+                    FURI_LOG_D(
+                        TAG, "Key B found: %04lx%08lx", (uint32_t)(key >> 32), (uint32_t)key);
                     nfc_worker->callback(NfcWorkerEventFoundKeyB, nfc_worker->context);
                 }
             }
@@ -680,13 +720,15 @@ void nfc_worker_mf_classic_dict_attack(NfcWorker* nfc_worker) {
                 nfc_worker->callback(NfcWorkerEventNewDictKeyBatch, nfc_worker->context);
             }
             furi_hal_nfc_sleep();
-            if(furi_hal_nfc_activate_nfca(200, NULL)) {
-                furi_hal_nfc_sleep();
+            uint32_t cuid;
+            if(furi_hal_nfc_activate_nfca(200, &cuid)) {
+                bool deactivated = false;
                 if(!card_found_notified) {
                     nfc_worker->callback(NfcWorkerEventCardDetected, nfc_worker->context);
                     card_found_notified = true;
                     card_removed_notified = false;
                     nfc_worker_mf_classic_key_attack(nfc_worker, prev_key, &tx_rx, i);
+                    deactivated = true;
                 }
                 FURI_LOG_D(
                     TAG,
@@ -696,21 +738,55 @@ void nfc_worker_mf_classic_dict_attack(NfcWorker* nfc_worker) {
                     (uint32_t)key);
                 if(!is_key_a_found) {
                     is_key_a_found = mf_classic_is_key_found(data, i, MfClassicKeyA);
-                    if(mf_classic_authenticate(&tx_rx, block_num, key, MfClassicKeyA)) {
+                    if(mf_classic_authenticate_skip_activate(
+                           &tx_rx, block_num, key, MfClassicKeyA, !deactivated, cuid)) {
                         mf_classic_set_key_found(data, i, MfClassicKeyA, key);
-                        FURI_LOG_D(TAG, "Key found");
+                        FURI_LOG_D(TAG, "Key A found");
                         nfc_worker->callback(NfcWorkerEventFoundKeyA, nfc_worker->context);
+
+                        uint64_t found_key;
+                        if(nfc_worker_mf_get_b_key_from_sector_trailer(
+                               &tx_rx, i, key, &found_key)) {
+                            FURI_LOG_D(TAG, "Found B key via reading sector %d", i);
+                            mf_classic_set_key_found(data, i, MfClassicKeyB, found_key);
+
+                            if(nfc_worker->state == NfcWorkerStateMfClassicDictAttack) {
+                                nfc_worker->callback(NfcWorkerEventFoundKeyB, nfc_worker->context);
+                            }
+
+                            nfc_worker_mf_classic_key_attack(nfc_worker, found_key, &tx_rx, i + 1);
+                            break;
+                        }
                         nfc_worker_mf_classic_key_attack(nfc_worker, key, &tx_rx, i + 1);
                     }
                     furi_hal_nfc_sleep();
+                    deactivated = true;
+                } else {
+                    // If the key A is marked as found and matches the searching key, invalidate it
+                    if(mf_classic_is_key_found(data, i, MfClassicKeyA) &&
+                       data->block[i].value[0] == key) {
+                        mf_classic_set_key_not_found(data, i, MfClassicKeyA);
+                        is_key_a_found = false;
+                        FURI_LOG_D(TAG, "Key %dA not found in attack", i);
+                    }
                 }
                 if(!is_key_b_found) {
                     is_key_b_found = mf_classic_is_key_found(data, i, MfClassicKeyB);
-                    if(mf_classic_authenticate(&tx_rx, block_num, key, MfClassicKeyB)) {
-                        FURI_LOG_D(TAG, "Key found");
+                    if(mf_classic_authenticate_skip_activate(
+                           &tx_rx, block_num, key, MfClassicKeyB, !deactivated, cuid)) {
+                        FURI_LOG_D(TAG, "Key B found");
                         mf_classic_set_key_found(data, i, MfClassicKeyB, key);
                         nfc_worker->callback(NfcWorkerEventFoundKeyB, nfc_worker->context);
                         nfc_worker_mf_classic_key_attack(nfc_worker, key, &tx_rx, i + 1);
+                    }
+                    deactivated = true;
+                } else {
+                    // If the key B is marked as found and matches the searching key, invalidate it
+                    if(mf_classic_is_key_found(data, i, MfClassicKeyB) &&
+                       data->block[i].value[10] == key) {
+                        mf_classic_set_key_not_found(data, i, MfClassicKeyB);
+                        is_key_b_found = false;
+                        FURI_LOG_D(TAG, "Key %dB not found in attack", i);
                     }
                 }
                 if(is_key_a_found && is_key_b_found) break;

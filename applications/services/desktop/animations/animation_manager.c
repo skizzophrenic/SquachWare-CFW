@@ -15,7 +15,7 @@
 
 #define TAG "AnimationManager"
 
-#define HARDCODED_ANIMATION_NAME "SquachWare_DefaultAni"
+#define HARDCODED_ANIMATION_NAME "L1_Tv_128x47"
 #define NO_SD_ANIMATION_NAME "L1_NoSd_128x49"
 #define BAD_BATTERY_ANIMATION_NAME "L1_BadBattery_128x47"
 

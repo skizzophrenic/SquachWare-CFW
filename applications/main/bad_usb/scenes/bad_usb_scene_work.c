@@ -1,7 +1,7 @@
-#include "../bad_usb_script.h"
+#include "../helpers/ducky_script.h"
 #include "../bad_usb_app_i.h"
 #include "../views/bad_usb_view.h"
-#include "furi_hal.h"
+#include <furi_hal.h>
 #include "toolbox/path.h"
 
 void bad_usb_scene_work_button_callback(InputKey key, void* context) {
@@ -16,7 +16,9 @@ bool bad_usb_scene_work_on_event(void* context, SceneManagerEvent event) {
 
     if(event.type == SceneManagerEventTypeCustom) {
         if(event.event == InputKeyLeft) {
-            scene_manager_next_scene(app->scene_manager, BadUsbSceneConfig);
+            if(bad_usb_is_idle_state(app->bad_usb_view)) {
+                scene_manager_next_scene(app->scene_manager, BadUsbSceneConfig);
+            }
             consumed = true;
         } else if(event.event == InputKeyOk) {
             bad_usb_script_toggle(app->bad_usb_script);
@@ -33,17 +35,15 @@ void bad_usb_scene_work_on_enter(void* context) {
 
     FuriString* file_name;
     file_name = furi_string_alloc();
-
-    FuriString* layout_name = furi_string_alloc();
-
     path_extract_filename(app->file_path, file_name, true);
     bad_usb_set_file_name(app->bad_usb_view, furi_string_get_cstr(file_name));
-
-    path_extract_filename(app->keyboard_layout, layout_name, true);
-    bad_usb_set_layout_name(app->bad_usb_view, furi_string_get_cstr(layout_name));
-
     furi_string_free(file_name);
-    furi_string_free(layout_name);
+
+    FuriString* layout;
+    layout = furi_string_alloc();
+    path_extract_filename(app->keyboard_layout, layout, true);
+    bad_usb_set_layout(app->bad_usb_view, furi_string_get_cstr(layout));
+    furi_string_free(layout);
 
     bad_usb_set_state(app->bad_usb_view, bad_usb_script_get_state(app->bad_usb_script));
 
@@ -53,6 +53,4 @@ void bad_usb_scene_work_on_enter(void* context) {
 
 void bad_usb_scene_work_on_exit(void* context) {
     UNUSED(context);
-    // BadUsbApp* app = context;
-    // bad_usb_script_close(app->bad_usb_script);
 }

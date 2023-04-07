@@ -67,6 +67,24 @@ bool furi_hal_version_do_i_belong_here();
  */
 const char* furi_hal_version_get_model_name();
 
+/** Get model name
+ *
+ * @return     model code C-string
+ */
+const char* furi_hal_version_get_model_code();
+
+/** Get FCC ID
+ *
+ * @return     FCC id as C-string
+ */
+const char* furi_hal_version_get_fcc_id();
+
+/** Get IC id
+ *
+ * @return     IC id as C-string
+ */
+const char* furi_hal_version_get_ic_id();
+
 /** Get OTP version
  *
  * @return     OTP Version
@@ -126,10 +144,6 @@ FuriHalVersionDisplay furi_hal_version_get_hw_display();
  * @return     Hardware Manufacture timestamp
  */
 uint32_t furi_hal_version_get_hw_timestamp();
-
-/** Adding Name Changer Functionality (SQUACHWARE) **/
-
-void furi_hal_version_set_custom_name(const char* name);
 
 /** Get pointer to target name
  *

@@ -90,18 +90,6 @@ typedef struct {
 
 static FuriHalVersion furi_hal_version = {0};
 
-/** Adding Name Changer Functionality (SQUACHWARE) **/
-
-void furi_hal_version_set_custom_name(const char* name) {
-    if((name != NULL) && ((strlen(name) >= 1) && (strlen(name) <= 8))) {
-        strlcpy(furi_hal_version.name, name, FURI_HAL_VERSION_ARRAY_NAME_LENGTH);
-        snprintf(
-            furi_hal_version.device_name, FURI_HAL_VERSION_DEVICE_NAME_LENGTH, "xFlipper %s", name);
-
-        furi_hal_version.device_name[0] = AD_TYPE_COMPLETE_LOCAL_NAME;
-    }
-}
-
 static void furi_hal_version_set_name(const char* name) {
     if(name != NULL) {
         strlcpy(furi_hal_version.name, name, FURI_HAL_VERSION_ARRAY_NAME_LENGTH);
@@ -205,14 +193,6 @@ void furi_hal_version_init() {
     furi_hal_rtc_set_register(FuriHalRtcRegisterVersion, (uint32_t)version_get());
 
     FURI_LOG_I(TAG, "Init OK");
-}
-
-bool furi_hal_version_do_i_belong_here() {
-    return furi_hal_version_get_hw_target() == 7;
-}
-
-const char* furi_hal_version_get_model_name() {
-    return "Flipper Zero";
 }
 
 FuriHalVersionOtpVersion furi_hal_version_get_otp_version() {
