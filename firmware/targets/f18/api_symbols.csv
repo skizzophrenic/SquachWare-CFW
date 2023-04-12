@@ -271,7 +271,7 @@ Function,-,LL_USART_ClockStructInit,void,LL_USART_ClockInitTypeDef*
 Function,-,LL_USART_DeInit,ErrorStatus,USART_TypeDef*
 Function,+,LL_USART_Init,ErrorStatus,"USART_TypeDef*, LL_USART_InitTypeDef*"
 Function,-,LL_USART_StructInit,void,LL_USART_InitTypeDef*
-Function,+,LL_mDelay,void,uint32_t
+Function,-,LL_mDelay,void,uint32_t
 Function,-,SystemCoreClockUpdate,void,
 Function,-,SystemInit,void,
 Function,-,_Exit,void,int
