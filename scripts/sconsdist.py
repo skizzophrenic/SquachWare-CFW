@@ -84,21 +84,16 @@ class Main(App):
             if exists(sdk_folder := join(obj_directory, foldertype)):
                 self.note_dist_component(foldertype, "dir", sdk_folder)
 
-    def package_zip(self, foldertype, sdk_folder):
+        # TODO: remove this after everyone migrates to new uFBT
+        self.create_zip_stub("lib")
+
+    def create_zip_stub(self, foldertype):
         with zipfile.ZipFile(
             self.get_dist_path(self.get_dist_file_name(foldertype, "zip")),
             "w",
             zipfile.ZIP_DEFLATED,
-        ) as zf:
-            for root, _, files in walk(sdk_folder):
-                for file in files:
-                    zf.write(
-                        join(root, file),
-                        relpath(
-                            join(root, file),
-                            sdk_folder,
-                        ),
-                    )
+        ) as _:
+            pass
 
     def copy(self) -> int:
         self._dist_components: dict[str, str] = dict()
@@ -186,9 +181,9 @@ class Main(App):
         ) as zf:
             for component_key in sdk_components_keys:
                 component_path = self._dist_components.get(component_key)
-                components_paths[component_key] = basename(component_path)
 
                 if component_key.endswith(".dir"):
+                    components_paths[component_key] = basename(component_path)
                     for root, dirnames, files in walk(component_path):
                         if "__pycache__" in dirnames:
                             dirnames.remove("__pycache__")
@@ -204,7 +199,9 @@ class Main(App):
                                 ),
                             )
                 else:
-                    zf.write(component_path, basename(component_path))
+                    # We use fixed names for files to avoid having to regenerate VSCode project
+                    components_paths[component_key] = component_key
+                    zf.write(component_path, component_key)
 
             zf.writestr(
                 "components.json",

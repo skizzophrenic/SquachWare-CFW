@@ -17,6 +17,8 @@
 #include "helpers/pin_lock.h"
 #include "helpers/slideshow_filename.h"
 
+#define TAG "Desktop"
+
 static void desktop_auto_lock_arm(Desktop*);
 static void desktop_auto_lock_inhibit(Desktop*);
 static void desktop_start_auto_lock_timer(Desktop*);
@@ -35,7 +37,7 @@ static void desktop_loader_callback(const void* message, void* context) {
 static void desktop_lock_icon_draw_callback(Canvas* canvas, void* context) {
     UNUSED(context);
     furi_assert(canvas);
-    canvas_draw_icon(canvas, 0, 0, &I_Lock_8x8);
+    canvas_draw_icon(canvas, 0, 0, &I_Lock_7x8);
 }
 
 static void desktop_dummy_mode_icon_draw_callback(Canvas* canvas, void* context) {
@@ -142,11 +144,13 @@ void desktop_unlock(Desktop* desktop) {
 }
 
 void desktop_set_dummy_mode_state(Desktop* desktop, bool enabled) {
+    desktop->in_transition = true;
     view_port_enabled_set(desktop->dummy_mode_icon_viewport, enabled);
     desktop_main_set_dummy_mode_state(desktop->main_view, enabled);
     animation_manager_set_dummy_mode_state(desktop->animation_manager, enabled);
     desktop->settings.dummy_mode = enabled;
     DESKTOP_SETTINGS_SAVE(&desktop->settings);
+    desktop->in_transition = false;
 }
 
 Desktop* desktop_alloc() {
@@ -226,7 +230,7 @@ Desktop* desktop_alloc() {
 
     // Lock icon
     desktop->lock_icon_viewport = view_port_alloc();
-    view_port_set_width(desktop->lock_icon_viewport, icon_get_width(&I_Lock_8x8));
+    view_port_set_width(desktop->lock_icon_viewport, icon_get_width(&I_Lock_7x8));
     view_port_draw_callback_set(
         desktop->lock_icon_viewport, desktop_lock_icon_draw_callback, desktop);
     view_port_enabled_set(desktop->lock_icon_viewport, false);
@@ -321,6 +325,12 @@ static bool desktop_check_file_flag(const char* flag_path) {
 
 int32_t desktop_srv(void* p) {
     UNUSED(p);
+
+    if(furi_hal_rtc_get_boot_mode() != FuriHalRtcBootModeNormal) {
+        FURI_LOG_W(TAG, "Skipping start in special boot mode");
+        return 0;
+    }
+
     Desktop* desktop = desktop_alloc();
 
     bool loaded = DESKTOP_SETTINGS_LOAD(&desktop->settings);
