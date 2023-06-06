@@ -5,7 +5,6 @@ App(
     provides=[
         # "dolphin_passport",
         # "passport_settings",
-        "cfw_app_loader",
         "desktop_settings_loader",
         "passport_settings_loader",
         "system_settings",

@@ -92,23 +92,14 @@ Dolphin* dolphin_alloc() {
     dolphin->state = dolphin_state_alloc();
     dolphin->event_queue = furi_message_queue_alloc(8, sizeof(DolphinEvent));
     dolphin->pubsub = furi_pubsub_alloc();
-    dolphin->butthurt_timer = xTimerCreate(
-        NULL, HOURS_IN_TICKS(2 * 24), pdTRUE, dolphin, dolphin_butthurt_timer_callback);
+    dolphin->butthurt_timer =
+        xTimerCreate(NULL, HOURS_IN_TICKS(24), pdTRUE, dolphin, dolphin_butthurt_timer_callback);
     dolphin->flush_timer =
         xTimerCreate(NULL, 30 * 1000, pdFALSE, dolphin, dolphin_flush_timer_callback);
     dolphin->clear_limits_timer = xTimerCreate(
         NULL, HOURS_IN_TICKS(24), pdTRUE, dolphin, dolphin_clear_limits_timer_callback);
 
     return dolphin;
-}
-
-void dolphin_free(Dolphin* dolphin) {
-    furi_assert(dolphin);
-
-    dolphin_state_free(dolphin->state);
-    furi_message_queue_free(dolphin->event_queue);
-
-    free(dolphin);
 }
 
 void dolphin_event_send_async(Dolphin* dolphin, DolphinEvent* event) {
@@ -217,7 +208,7 @@ int32_t dolphin_srv(void* p) {
         }
     }
 
-    dolphin_free(dolphin);
+    furi_crash("That was unexpected");
 
     return 0;
 }

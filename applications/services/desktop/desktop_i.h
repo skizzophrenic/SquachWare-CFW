@@ -65,6 +65,7 @@ struct Desktop {
     ViewPort* topbar_icon_viewport;
     ViewPort* sdcard_icon_viewport;
     ViewPort* bt_icon_viewport;
+    ViewPort* clock_viewport;
     ViewPort* stealth_mode_icon_viewport;
 
     ViewPort* lock_icon_slim_viewport;
@@ -72,6 +73,7 @@ struct Desktop {
     ViewPort* topbar_icon_slim_viewport;
     ViewPort* sdcard_icon_slim_viewport;
     ViewPort* bt_icon_slim_viewport;
+    ViewPort* clock_slim_viewport;
     ViewPort* stealth_mode_icon_slim_viewport;
 
     AnimationManager* animation_manager;
@@ -84,11 +86,18 @@ struct Desktop {
     FuriPubSubSubscription* input_events_subscription;
     FuriPubSubSubscription* storage_sub;
     FuriTimer* auto_lock_timer;
+    FuriTimer* update_clock_timer;
 
     Bt* bt;
-    bool in_transition;
 
     bool sdcard_status;
+
+    FuriPubSub* status_pubsub;
+    uint8_t hour;
+    uint8_t minute;
+    bool clock_type : 1; // true - 24h false - 12h
+
+    bool in_transition : 1;
 };
 
 Desktop* desktop_alloc();

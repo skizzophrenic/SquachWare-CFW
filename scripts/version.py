@@ -37,14 +37,13 @@ class GitVersion:
 
         version = (
             os.environ.get("DIST_SUFFIX", None)
-            or "0.83.2"
+            or "0.84.3"
         )
 
         force_no_dirty = (
             os.environ.get("FORCE_NO_DIRTY", None)
             or ""
         )
-
         if (force_no_dirty != ""):
             dirty = False
 
@@ -53,7 +52,22 @@ class GitVersion:
             "GIT_BRANCH": branch,
             "VERSION": version,
             "BUILD_DIRTY": 0,
+            "GIT_ORIGIN": ",".join(self._get_git_origins()),
         }
+
+    def _get_git_origins(self):
+        try:
+            remotes = self._exec_git("remote -v")
+        except subprocess.CalledProcessError:
+            return set()
+        origins = set()
+        for line in remotes.split("\n"):
+            if not line:
+                continue
+            _, destination = line.split("\t")
+            url, _ = destination.split(" ")
+            origins.add(url)
+        return origins
 
     def _exec_git(self, args):
         cmd = ["git"]
@@ -82,6 +96,13 @@ class Main(App):
             help="hardware target",
             required=True,
         )
+        self.parser_generate.add_argument(
+            "-fw-origin",
+            dest="firmware_origin",
+            type=str,
+            help="firmware origin",
+            required=True,
+        )
         self.parser_generate.add_argument("--dir", dest="sourcedir", required=True)
         self.parser_generate.set_defaults(func=self.generate)
 
@@ -97,6 +118,7 @@ class Main(App):
             {
                 "BUILD_DATE": build_date.strftime("%d-%m-%Y"),
                 "TARGET": self.args.target,
+                "FIRMWARE_ORIGIN": self.args.firmware_origin,
             }
         )
 

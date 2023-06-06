@@ -1,40 +1,38 @@
 ### New changes
-* **Warning! After installing, Desktop settings (Favoutite apps, PIN Code, AutoLock time..) will be resetted to default due to OFW changes, Please set your PIN code, Favourite apps again in Settings->Desktop**
-* New way of changing device name -> **Now can be changed in Settings->Desktop** (by @xMasterX and @Willy-JL)
-* Plugins: BadBT plugin (BT version of BadKB) [(by Willy-JL, ClaraCrazy, XFW contributors)](https://github.com/ClaraCrazy/Flipper-Xtreme/tree/dev/applications/main/bad_kb)
-* Plugins: WiFi Marauder -> Added sniff pmkid on selected aps from 0.10.4 update (by @clipboard1)
-* Plugins: SubGHz Bruteforcer -> Increase delay just a little bit to fix some cases when receiver will not get codes and decrease manual transmit delay
-* Plugins: UART Terminal -> Fix crashes on plugin load with RX connected
-* SubGHz: **CAME Atomo - Add manually support and custom buttons support**
-* SubGHz: Fix crashes when deleting signals using right arrow button in `Read` mode
-* SubGHz: Restore Rx indication after deletion after Memory is FULL (by @wosk | PR #464)
-* SubGHz: **App refactoring** (OFW code ported + our code was refactored/cleaned up too) (by @gid9798 and @xMasterX | PR #461)
-* SubGHz: Using scene manager functions in DecodeRAW (by @gid9798 | PR #462)
-* SubGHz: Protocols and custom buttons refactoring (by @gid9798 | PR #465)
-* SubGHz: Move `counter increase` setting out of debug, change max value
-* GUI: Submenu locked elements (by @Willy-JL and @giacomoferretti)
-* GUI: Text Input improvements, added cursor and ability to set minimal length (by @Willy-JL)
-* BT API: Functions that allow to change bt mac address and device broadcasted name (by @Willy-JL and XFW contributors)
-* Infrared: `External output` move out of debug and add power option for external modules
-* Extra pack: Some app fixes
-* FBT: Fix vscode example config for debug builds - please run `./fbt vscode_dist` again if you had issues with debug builds size
-* OFW PR 2316: NFC V support (by @g3gg0 & @nvx)
-* OFW PR 2669: nfc: Fix MFUL tearing flags read (by @GMMan)
-* OFW PR 2666: BadUSB: Add fr-FR-mac key layout (by @FelixLgr)
-* OFW: api: added lib/nfc/protocols/nfc_util.h
-* OFW: fix PIN retry count reset on reboot 
-* OFW: fbt: allow strings for fap_version field in app manifests
-* OFW: Rpc: add desktop service. Desktop: refactor locking routine. **Now PIN lock is actually cannot be bypassed by reboot!** / **Desktop settings will be reset, please set your PIN and favourite apps again!**
-* OFW: Part 2 of hooking C2 IPC
-* OFW: ble: attempt to handle hardfaulted c2
-* OFW: Add Mfkey32 application
-* OFW: Added DigitalSequence and PulseReader
-* OFW: Debug: revert cortex debug to lxml and drop DWT **(reapply your VSCode launch.json from example folder)**
-* OFW: furi_crash: added C2 status; added fw-version gdb command
-* OFW: Removed STM32CubeWB module
-* OFW: API version in UI
-* OFW: ufbt: deploying sample ufbt automation for new apps; added `source "ufbt -s env"` for toolchain access
-* OFW: Fix storage.py exist_dir logic
+* If you have copied any apps manually into `apps` folder - remove `apps` folder or that specific apps you copied on your microSD before installing this release to avoid issues due to OFW API version update! If you using regular builds or extra pack builds (e) without your manually added apps, all included apps will be installed automatically, no extra actions needed!
+-----
+* Only in release 052 -> **Multiple Extra pack apps was fixed!** -> TAMA P1, Flizzer Tracker, Video Player, Music Tracker
+* NFC V: Remove delay from emulation loop. This improves compatibility when the reader is Android.
+* Plugins: iButton Fuzzer -> Fix v2 key files load (all new saved files)
+### Previous changes
+* SubGHz Remote: Fixed BinRAW support, + many other fixes (by @gid9798 | PR #492)
+* SubGHz: Fix KL: Stilmatic support + add manually support
+* SubGHz: Keeloq mfname refactoring (by @gid9798 | PR #479)
+* Desktop Clock: Some improvements and fixes (by @gid9798 | PR #490)
+* LF RFID: Cleanup duplicated code (by @gid9798 | PR #493)
+* NFC V: Code review fixes + some GUI rework (by @nvx & @xMasterX)
+* NFC V: Fixed crash when exiting emulation and starting it again
+* Infrared: Use Universal AC Remote from OFW, same for Audio remote, and rename buttons in OFW naming scheme
+* Infrared: Update universal remote assets (by @amec0e)
+* GUI Keyboard: Fix crash when renaming files with long file name (Fixed issue #489)
+* Misc: Fix APP_IDs to match new regex (regex check will be added in OFW soon)
+* Plugins: Protoview, WAV Player, DTMF Dolphin - fixed all known crashes, ported to latest hal bus system
+* Plugins: ESP8266 Deauther - Crash fix (Fixed issue #497)
+* Plugins: Update -> Mifare Nested [(by AloneLiberty)](https://github.com/AloneLiberty/FlipperNested)
+* Plugins: Update -> TOTP (Authenticator) [(by akopachov)](https://github.com/akopachov/flipper-zero_authenticator)
+* Plugins: Update -> ESP32: WiFi Marauder companion plugin [(by 0xchocolate)](https://github.com/0xchocolate/flipperzero-wifi-marauder)
+* Plugins: Update -> UART Terminal [(by cool4uma)](https://github.com/cool4uma/UART_Terminal/tree/main)
+* OFW: FuriHal: disable bus re-initialization on early init and extra asserts for AHB1,AHB2,AHB3 which must be left intact on entering to FUS -> **Fixes updater error 1-100**
+* OFW: NFC: fix MFC timings -> **Fixes issues with Mifare Classic emulation that could happen after unlshd-049 release**
+* OFW: Update dolphin.py
+* OFW: NFC Magic: Fix gen1 writing with invalid BCC (lost fix from PR 2511)
+* OFW: SubGhz: fix flipper crashes after exiting broadcast blocking message and crash cli
+* OFW: Dolphin: new animation
+* OFW: fbt: added hooks for build & dist environments; added FW_ORIGIN_* macro for apps & SDK 
+* OFW: FuriHal: add bus abstraction -> **Breaking API change, API version was changed from 27.x to 28.x** 
+* OFW: Implement support for reading Opal card (Sydney, Australia) 
+* OFW: BadUSB: script execution pause
+* OFW: IR Universal AC: Add Carrier 42QHB12D8S
 
 #### [🎲 Download latest extra apps pack](https://github.com/xMasterX/all-the-plugins/archive/refs/heads/main.zip)
 

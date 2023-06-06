@@ -23,9 +23,8 @@
 #include "views/hid_media.h"
 #include "views/hid_mouse.h"
 #include "views/hid_mouse_jiggler.h"
-#include "views/hid_tiktok.h"
+#include "views/hid_tikshorts.h"
 #include "views/hid_camera.h"
-#include "views/hid_ytshorts.h"
 #include "views/hid_mouse_clicker.h"
 
 #include "hid_path.h"
@@ -52,8 +51,7 @@ struct Hid {
     HidMouse* hid_mouse;
     HidMouseClicker* hid_mouse_clicker;
     HidMouseJiggler* hid_mouse_jiggler;
-    HidTikTok* hid_tiktok;
-    HidYTShorts* hid_ytshorts;
+    HidTikShorts* hid_tikshorts;
     HidCamera* hid_camera;
 
     HidTransport transport;

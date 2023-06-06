@@ -103,6 +103,15 @@ void gui_remove_framebuffer_callback(Gui* gui, GuiCanvasCommitCallback callback,
  */
 size_t gui_get_framebuffer_size(const Gui* gui);
 
+/** Set hidden statusbar
+ *
+ * Hide the statusbar (stacks if called multiple times).
+ *
+ * @param      gui       Gui instance
+ * @param      hinned    bool, true if hidden
+ */
+void gui_set_hide_statusbar(Gui* gui, bool hidden);
+
 /** Set lockdown mode
  *
  * When lockdown mode is enabled, only GuiLayerDesktop is shown.
@@ -134,6 +143,8 @@ Canvas* gui_direct_draw_acquire(Gui* gui);
  * @param      gui   Gui instance
  */
 void gui_direct_draw_release(Gui* gui);
+
+uint8_t gui_get_count_of_enabled_view_port_in_layer(Gui* gui, GuiLayer layer);
 
 #ifdef __cplusplus
 }

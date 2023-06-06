@@ -20,6 +20,8 @@ CfwSettings cfw_settings = {
 };
 
 void CFW_SETTINGS_LOAD() {
+    if(!furi_hal_is_normal_boot()) return;
+
     CfwSettings* x = &cfw_settings;
     Storage* storage = furi_record_open(RECORD_STORAGE);
     FlipperFormat* file = flipper_format_file_alloc(storage);

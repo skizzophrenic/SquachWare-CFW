@@ -43,21 +43,14 @@ void infrared_scene_start_on_enter(void* context) {
         SubmenuIndexDebugSettings,
         infrared_scene_start_submenu_callback,
         infrared);
-
-    if(infrared->app_state.is_debug_enabled) {
-        submenu_add_item(
-            submenu,
-            "Learn New Remote RAW",
-            SubmenuIndexLearnNewRemoteRaw,
-            infrared_scene_start_submenu_callback,
-            infrared);
-        submenu_add_item(
-            submenu,
-            "Debug RX",
-            SubmenuIndexDebug,
-            infrared_scene_start_submenu_callback,
-            infrared);
-    }
+    submenu_add_item(
+        submenu,
+        "Learn New Remote RAW",
+        SubmenuIndexLearnNewRemoteRaw,
+        infrared_scene_start_submenu_callback,
+        infrared);
+    submenu_add_item(
+        submenu, "Debug RX", SubmenuIndexDebug, infrared_scene_start_submenu_callback, infrared);
 
     const uint32_t submenu_index =
         scene_manager_get_scene_state(scene_manager, InfraredSceneStart);

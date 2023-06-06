@@ -76,7 +76,8 @@ bool cfw_app_apply(CfwApp* app) {
             do {
                 if(!flipper_format_file_open_always(file, NAMESPOOF_PATH)) break;
 
-                if(!flipper_format_write_header_cstr(file, NAMESPOOF_HEADER, NAMESPOOF_VERSION)) break;
+                if(!flipper_format_write_header_cstr(file, NAMESPOOF_HEADER, NAMESPOOF_VERSION))
+                    break;
 
                 if(!flipper_format_write_comment_cstr(
                        file, "Changing the value below will change your FlipperZero device name."))

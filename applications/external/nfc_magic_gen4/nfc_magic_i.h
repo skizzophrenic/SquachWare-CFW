@@ -29,7 +29,7 @@
 #include <lib/toolbox/path.h>
 
 #include <lib/nfc/nfc_device.h>
-#include "NFC_Magic_icons.h"
+#include "nfc_magic_g4_icons.h"
 
 #define NFC_APP_FOLDER ANY_PATH("nfc")
 

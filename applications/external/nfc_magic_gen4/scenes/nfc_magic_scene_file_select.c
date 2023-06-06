@@ -27,7 +27,15 @@ static bool nfc_magic_scene_file_select_is_file_suitable(NfcMagic* nfc_magic) {
         case MagicTypeUltralightC_Gen1:
         case MagicTypeUltralightC_DirectWrite:
         case MagicTypeGen4:
-            return true;
+            switch(nfc_dev->dev_data.mf_ul_data.type) {
+            case MfUltralightTypeNTAGI2C1K:
+            case MfUltralightTypeNTAGI2C2K:
+            case MfUltralightTypeNTAGI2CPlus1K:
+            case MfUltralightTypeNTAGI2CPlus2K:
+                return false;
+            default:
+                return true;
+            }
         default:
             return false;
         }
@@ -39,9 +47,9 @@ static bool nfc_magic_scene_file_select_is_file_suitable(NfcMagic* nfc_magic) {
 void nfc_magic_scene_file_select_on_enter(void* context) {
     NfcMagic* nfc_magic = context;
     // Process file_select return
-
     nfc_device_set_loading_callback(
         nfc_magic->source_dev, nfc_magic_show_loading_popup, nfc_magic);
+
     if(!furi_string_size(nfc_magic->source_dev->load_path)) {
         furi_string_set_str(nfc_magic->source_dev->load_path, NFC_APP_FOLDER);
     }

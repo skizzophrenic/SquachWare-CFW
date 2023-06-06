@@ -9,9 +9,12 @@
 #endif
 
 // List of compatible firmwares
-#define TOTP_FIRMWARE_OFFICIAL_STABLE (1)
-#define TOTP_FIRMWARE_OFFICIAL_DEV (2)
-#define TOTP_FIRMWARE_CFW (3)
+#define TOTP_FIRMWARE_OFFICIAL_STABLE 1
+#define TOTP_FIRMWARE_OFFICIAL_DEV 2
+#define TOTP_FIRMWARE_CFW 3
 // End of list
 
 #define TOTP_TARGET_FIRMWARE TOTP_FIRMWARE_CFW
+
+// Max custom fonts value
+#define MAX_CUSTOM_FONTS (9)

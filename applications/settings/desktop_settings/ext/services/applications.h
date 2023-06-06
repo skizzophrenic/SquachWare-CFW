@@ -29,11 +29,11 @@ const FlipperApplication FLIPPER_APPS2[] = {
     },
 
     {
-        .name = "Apps",
+        .name = "Applications",
     },
 
     {
-        .name = "SubGHz",
+        .name = "Sub-GHz",
     },
 
     {
@@ -45,7 +45,7 @@ const FlipperApplication FLIPPER_APPS2[] = {
     },
 
     {
-        .name = "RFID",
+        .name = "125 kHz RFID",
     },
 
     {

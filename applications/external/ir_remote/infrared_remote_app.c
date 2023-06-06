@@ -587,7 +587,11 @@ int32_t infrared_remote_app(void* p) {
                         InfraredRawSignal* raw_signal =
                             infrared_signal_get_raw_signal(active_signal);
                         infrared_worker_set_raw_signal(
-                            app->infrared_worker, raw_signal->timings, raw_signal->timings_size);
+                            app->infrared_worker,
+                            raw_signal->timings,
+                            raw_signal->timings_size,
+                            raw_signal->frequency,
+                            raw_signal->duty_cycle);
                     } else {
                         InfraredMessage* message = infrared_signal_get_message(active_signal);
                         infrared_worker_set_decoded_signal(app->infrared_worker, message);

@@ -15,30 +15,52 @@ typedef struct {
 } UART_TextInputKey;
 
 typedef struct {
+    const WIFI_TextInputKey* rows[3];
+    const uint8_t keyboard_index;
+} Keyboard;
+
+typedef struct {
     const char* header;
     char* text_buffer;
     size_t text_buffer_size;
+    size_t minimum_length;
     bool clear_default_text;
 
+<<<<<<<< HEAD:applications/external/esp32cam_morseflasher/uart_text_input.c
     UART_TextInputCallback callback;
+========
+    bool cursor_select;
+    size_t cursor_pos;
+
+    WIFI_TextInputCallback callback;
+>>>>>>>> 6b6fe16fed0533ac7f28d9c141db26086b167de8:applications/external/wifi_marauder_companion/wifi_marauder_text_input.c
     void* callback_context;
 
     uint8_t selected_row;
     uint8_t selected_column;
+    uint8_t selected_keyboard;
 
     UART_TextInputValidatorCallback validator_callback;
     void* validator_callback_context;
     FuriString* validator_text;
+<<<<<<<< HEAD:applications/external/esp32cam_morseflasher/uart_text_input.c
     bool valadator_message_visible;
 } UART_TextInputModel;
+========
+    bool validator_message_visible;
+} WIFI_TextInputModel;
+>>>>>>>> 6b6fe16fed0533ac7f28d9c141db26086b167de8:applications/external/wifi_marauder_companion/wifi_marauder_text_input.c
 
 static const uint8_t keyboard_origin_x = 1;
 static const uint8_t keyboard_origin_y = 29;
-static const uint8_t keyboard_row_count = 4;
+static const uint8_t keyboard_row_count = 3;
+static const uint8_t keyboard_count = 2;
 
 #define ENTER_KEY '\r'
 #define BACKSPACE_KEY '\b'
+#define SWITCH_KEYBOARD_KEY 0xfe
 
+<<<<<<<< HEAD:applications/external/esp32cam_morseflasher/uart_text_input.c
 static const UART_TextInputKey keyboard_keys_row_1[] = {
     {'{', 1, 0},
     {'(', 9, 0},
@@ -111,10 +133,133 @@ static const UART_TextInputKey keyboard_keys_row_4[] = {
     {'9', 105, 33},
     {'!', 113, 33},
     {'+', 120, 33},
+========
+static const WIFI_TextInputKey keyboard_keys_row_1[] = {
+    {'q', 1, 8},
+    {'w', 10, 8},
+    {'e', 19, 8},
+    {'r', 28, 8},
+    {'t', 37, 8},
+    {'y', 46, 8},
+    {'u', 55, 8},
+    {'i', 64, 8},
+    {'o', 73, 8},
+    {'p', 82, 8},
+    {'0', 91, 8},
+    {'1', 100, 8},
+    {'2', 110, 8},
+    {'3', 120, 8},
 };
 
-static uint8_t get_row_size(uint8_t row_index) {
+static const WIFI_TextInputKey keyboard_keys_row_2[] = {
+    {'a', 1, 20},
+    {'s', 10, 20},
+    {'d', 19, 20},
+    {'f', 28, 20},
+    {'g', 37, 20},
+    {'h', 46, 20},
+    {'j', 55, 20},
+    {'k', 64, 20},
+    {'l', 73, 20},
+    {BACKSPACE_KEY, 82, 12},
+    {'4', 100, 20},
+    {'5', 110, 20},
+    {'6', 120, 20},
+};
+
+static const WIFI_TextInputKey keyboard_keys_row_3[] = {
+    {SWITCH_KEYBOARD_KEY, 1, 23},
+    {'z', 13, 32},
+    {'x', 21, 32},
+    {'c', 28, 32},
+    {'v', 36, 32},
+    {'b', 44, 32},
+    {'n', 52, 32},
+    {'m', 59, 32},
+    {'_', 67, 32},
+    {ENTER_KEY, 74, 23},
+    {'7', 100, 32},
+    {'8', 110, 32},
+    {'9', 120, 32},
+};
+
+static const WIFI_TextInputKey symbol_keyboard_keys_row_1[] = {
+    {'!', 2, 8},
+    {'@', 12, 8},
+    {'#', 22, 8},
+    {'$', 32, 8},
+    {'%', 42, 8},
+    {'^', 52, 8},
+    {'&', 62, 8},
+    {'(', 71, 8},
+    {')', 81, 8},
+    {'0', 91, 8},
+    {'1', 100, 8},
+    {'2', 110, 8},
+    {'3', 120, 8},
+>>>>>>>> 6b6fe16fed0533ac7f28d9c141db26086b167de8:applications/external/wifi_marauder_companion/wifi_marauder_text_input.c
+};
+
+static const WIFI_TextInputKey symbol_keyboard_keys_row_2[] = {
+    {'~', 2, 20},
+    {'+', 12, 20},
+    {'-', 22, 20},
+    {'=', 32, 20},
+    {'[', 42, 20},
+    {']', 52, 20},
+    {'{', 62, 20},
+    {'}', 72, 20},
+    {BACKSPACE_KEY, 82, 12},
+    {'4', 100, 20},
+    {'5', 110, 20},
+    {'6', 120, 20},
+};
+
+static const WIFI_TextInputKey symbol_keyboard_keys_row_3[] = {
+    {SWITCH_KEYBOARD_KEY, 1, 23},
+    {'.', 15, 32},
+    {',', 29, 32},
+    {';', 41, 32},
+    {'`', 53, 32},
+    {'\'', 65, 32},
+    {ENTER_KEY, 74, 23},
+    {'7', 100, 32},
+    {'8', 110, 32},
+    {'9', 120, 32},
+};
+
+static const Keyboard keyboard = {
+    .rows =
+        {
+            keyboard_keys_row_1,
+            keyboard_keys_row_2,
+            keyboard_keys_row_3,
+        },
+    .keyboard_index = 0,
+};
+
+static const Keyboard symbol_keyboard = {
+    .rows =
+        {
+            symbol_keyboard_keys_row_1,
+            symbol_keyboard_keys_row_2,
+            symbol_keyboard_keys_row_3,
+        },
+    .keyboard_index = 1,
+};
+
+static const Keyboard* keyboards[] = {
+    &keyboard,
+    &symbol_keyboard,
+};
+
+static void switch_keyboard(WIFI_TextInputModel* model) {
+    model->selected_keyboard = (model->selected_keyboard + 1) % keyboard_count;
+}
+
+static uint8_t get_row_size(const Keyboard* keyboard, uint8_t row_index) {
     uint8_t row_size = 0;
+<<<<<<<< HEAD:applications/external/esp32cam_morseflasher/uart_text_input.c
 
     switch(row_index + 1) {
     case 1:
@@ -129,11 +274,42 @@ static uint8_t get_row_size(uint8_t row_index) {
     case 4:
         row_size = sizeof(keyboard_keys_row_4) / sizeof(UART_TextInputKey);
         break;
+========
+    if(keyboard == &symbol_keyboard) {
+        switch(row_index + 1) {
+        case 1:
+            row_size = COUNT_OF(symbol_keyboard_keys_row_1);
+            break;
+        case 2:
+            row_size = COUNT_OF(symbol_keyboard_keys_row_2);
+            break;
+        case 3:
+            row_size = COUNT_OF(symbol_keyboard_keys_row_3);
+            break;
+        default:
+            furi_crash(NULL);
+        }
+    } else {
+        switch(row_index + 1) {
+        case 1:
+            row_size = COUNT_OF(keyboard_keys_row_1);
+            break;
+        case 2:
+            row_size = COUNT_OF(keyboard_keys_row_2);
+            break;
+        case 3:
+            row_size = COUNT_OF(keyboard_keys_row_3);
+            break;
+        default:
+            furi_crash(NULL);
+        }
+>>>>>>>> 6b6fe16fed0533ac7f28d9c141db26086b167de8:applications/external/wifi_marauder_companion/wifi_marauder_text_input.c
     }
 
     return row_size;
 }
 
+<<<<<<<< HEAD:applications/external/esp32cam_morseflasher/uart_text_input.c
 static const UART_TextInputKey* get_row(uint8_t row_index) {
     const UART_TextInputKey* row = NULL;
 
@@ -150,13 +326,28 @@ static const UART_TextInputKey* get_row(uint8_t row_index) {
     case 4:
         row = keyboard_keys_row_4;
         break;
+========
+static const WIFI_TextInputKey* get_row(const Keyboard* keyboard, uint8_t row_index) {
+    const WIFI_TextInputKey* row = NULL;
+    if(row_index < 3) {
+        row = keyboard->rows[row_index];
+    } else {
+        furi_crash(NULL);
+>>>>>>>> 6b6fe16fed0533ac7f28d9c141db26086b167de8:applications/external/wifi_marauder_companion/wifi_marauder_text_input.c
     }
 
     return row;
 }
 
+<<<<<<<< HEAD:applications/external/esp32cam_morseflasher/uart_text_input.c
 static char get_selected_char(UART_TextInputModel* model) {
     return get_row(model->selected_row)[model->selected_column].text;
+========
+static char get_selected_char(WIFI_TextInputModel* model) {
+    return get_row(
+               keyboards[model->selected_keyboard], model->selected_row)[model->selected_column]
+        .text;
+>>>>>>>> 6b6fe16fed0533ac7f28d9c141db26086b167de8:applications/external/wifi_marauder_companion/wifi_marauder_text_input.c
 }
 
 static bool char_is_lowercase(char letter) {
@@ -164,9 +355,9 @@ static bool char_is_lowercase(char letter) {
 }
 
 static char char_to_uppercase(const char letter) {
-    switch(letter) {
-    case '_':
+    if(letter == '_') {
         return 0x20;
+<<<<<<<< HEAD:applications/external/esp32cam_morseflasher/uart_text_input.c
         break;
     case '(':
         return 0x29;
@@ -194,12 +385,16 @@ static char char_to_uppercase(const char letter) {
         break;
     }
     if(isalpha(letter)) {
+========
+    } else if(char_is_lowercase(letter)) {
+>>>>>>>> 6b6fe16fed0533ac7f28d9c141db26086b167de8:applications/external/wifi_marauder_companion/wifi_marauder_text_input.c
         return (letter - 0x20);
     } else {
         return letter;
     }
 }
 
+<<<<<<<< HEAD:applications/external/esp32cam_morseflasher/uart_text_input.c
 static void uart_text_input_backspace_cb(UART_TextInputModel* model) {
     uint8_t text_length = model->clear_default_text ? 1 : strlen(model->text_buffer);
     if(text_length > 0) {
@@ -209,78 +404,105 @@ static void uart_text_input_backspace_cb(UART_TextInputModel* model) {
 
 static void uart_text_input_view_draw_callback(Canvas* canvas, void* _model) {
     UART_TextInputModel* model = _model;
+========
+static void wifi_text_input_backspace_cb(WIFI_TextInputModel* model) {
+    if(model->clear_default_text) {
+        model->text_buffer[0] = 0;
+        model->cursor_pos = 0;
+    } else if(model->cursor_pos > 0) {
+        char* move = model->text_buffer + model->cursor_pos;
+        memmove(move - 1, move, strlen(move) + 1);
+        model->cursor_pos--;
+    }
+}
+
+static void wifi_text_input_view_draw_callback(Canvas* canvas, void* _model) {
+    WIFI_TextInputModel* model = _model;
+>>>>>>>> 6b6fe16fed0533ac7f28d9c141db26086b167de8:applications/external/wifi_marauder_companion/wifi_marauder_text_input.c
     uint8_t text_length = model->text_buffer ? strlen(model->text_buffer) : 0;
     uint8_t needed_string_width = canvas_width(canvas) - 8;
     uint8_t start_pos = 4;
 
-    const char* text = model->text_buffer;
+    model->cursor_pos = model->cursor_pos > text_length ? text_length : model->cursor_pos;
+    size_t cursor_pos = model->cursor_pos;
 
     canvas_clear(canvas);
     canvas_set_color(canvas, ColorBlack);
 
-    canvas_draw_str(canvas, 2, 7, model->header);
-    elements_slightly_rounded_frame(canvas, 1, 8, 126, 12);
+    canvas_draw_str(canvas, 2, 8, model->header);
+    elements_slightly_rounded_frame(canvas, 1, 12, 126, 15);
 
-    if(canvas_string_width(canvas, text) > needed_string_width) {
-        canvas_draw_str(canvas, start_pos, 17, "...");
-        start_pos += 6;
-        needed_string_width -= 8;
+    char buf[model->text_buffer_size + 1];
+    if(model->text_buffer) {
+        strlcpy(buf, model->text_buffer, sizeof(buf));
     }
-
-    while(text != 0 && canvas_string_width(canvas, text) > needed_string_width) {
-        text++;
-    }
+    char* str = buf;
 
     if(model->clear_default_text) {
         elements_slightly_rounded_box(
-            canvas, start_pos - 1, 14, canvas_string_width(canvas, text) + 2, 10);
+            canvas, start_pos - 1, 14, canvas_string_width(canvas, str) + 2, 10);
         canvas_set_color(canvas, ColorWhite);
     } else {
-        canvas_draw_str(canvas, start_pos + canvas_string_width(canvas, text) + 1, 18, "|");
-        canvas_draw_str(canvas, start_pos + canvas_string_width(canvas, text) + 2, 18, "|");
+        char* move = str + cursor_pos;
+        memmove(move + 1, move, strlen(move) + 1);
+        str[cursor_pos] = '|';
     }
-    canvas_draw_str(canvas, start_pos, 17, text);
+
+    if(cursor_pos > 0 && canvas_string_width(canvas, str) > needed_string_width) {
+        canvas_draw_str(canvas, start_pos, 22, "...");
+        start_pos += 6;
+        needed_string_width -= 8;
+        for(uint32_t off = 0;
+            strlen(str) && canvas_string_width(canvas, str) > needed_string_width &&
+            off < cursor_pos;
+            off++) {
+            str++;
+        }
+    }
+
+    if(canvas_string_width(canvas, str) > needed_string_width) {
+        needed_string_width -= 4;
+        size_t len = strlen(str);
+        while(len && canvas_string_width(canvas, str) > needed_string_width) {
+            str[len--] = '\0';
+        }
+        strcat(str, "...");
+    }
+
+    canvas_draw_str(canvas, start_pos, 22, str);
 
     canvas_set_font(canvas, FontKeyboard);
 
+<<<<<<<< HEAD:applications/external/esp32cam_morseflasher/uart_text_input.c
     for(uint8_t row = 0; row <= keyboard_row_count; row++) {
         const uint8_t column_count = get_row_size(row);
         const UART_TextInputKey* keys = get_row(row);
+========
+    for(uint8_t row = 0; row < keyboard_row_count; row++) {
+        const uint8_t column_count = get_row_size(keyboards[model->selected_keyboard], row);
+        const WIFI_TextInputKey* keys = get_row(keyboards[model->selected_keyboard], row);
+>>>>>>>> 6b6fe16fed0533ac7f28d9c141db26086b167de8:applications/external/wifi_marauder_companion/wifi_marauder_text_input.c
 
         for(size_t column = 0; column < column_count; column++) {
+            bool selected = !model->cursor_select && model->selected_row == row &&
+                            model->selected_column == column;
+            const Icon* icon = NULL;
             if(keys[column].text == ENTER_KEY) {
-                canvas_set_color(canvas, ColorBlack);
-                if(model->selected_row == row && model->selected_column == column) {
-                    canvas_draw_icon(
-                        canvas,
-                        keyboard_origin_x + keys[column].x,
-                        keyboard_origin_y + keys[column].y,
-                        &I_KeySaveSelected_24x11);
-                } else {
-                    canvas_draw_icon(
-                        canvas,
-                        keyboard_origin_x + keys[column].x,
-                        keyboard_origin_y + keys[column].y,
-                        &I_KeySave_24x11);
-                }
+                icon = selected ? &I_KeySaveSelected_24x11 : &I_KeySave_24x11;
+            } else if(keys[column].text == SWITCH_KEYBOARD_KEY) {
+                icon = selected ? &I_KeyKeyboardSelected_10x11 : &I_KeyKeyboard_10x11;
             } else if(keys[column].text == BACKSPACE_KEY) {
-                canvas_set_color(canvas, ColorBlack);
-                if(model->selected_row == row && model->selected_column == column) {
-                    canvas_draw_icon(
-                        canvas,
-                        keyboard_origin_x + keys[column].x,
-                        keyboard_origin_y + keys[column].y,
-                        &I_KeyBackspaceSelected_16x9);
-                } else {
-                    canvas_draw_icon(
-                        canvas,
-                        keyboard_origin_x + keys[column].x,
-                        keyboard_origin_y + keys[column].y,
-                        &I_KeyBackspace_16x9);
-                }
+                icon = selected ? &I_KeyBackspaceSelected_16x9 : &I_KeyBackspace_16x9;
+            }
+            canvas_set_color(canvas, ColorBlack);
+            if(icon != NULL) {
+                canvas_draw_icon(
+                    canvas,
+                    keyboard_origin_x + keys[column].x,
+                    keyboard_origin_y + keys[column].y,
+                    icon);
             } else {
-                if(model->selected_row == row && model->selected_column == column) {
-                    canvas_set_color(canvas, ColorBlack);
+                if(selected) {
                     canvas_draw_box(
                         canvas,
                         keyboard_origin_x + keys[column].x - 1,
@@ -288,18 +510,24 @@ static void uart_text_input_view_draw_callback(Canvas* canvas, void* _model) {
                         7,
                         10);
                     canvas_set_color(canvas, ColorWhite);
-                } else {
-                    canvas_set_color(canvas, ColorBlack);
                 }
 
+<<<<<<<< HEAD:applications/external/esp32cam_morseflasher/uart_text_input.c
                 if(model->clear_default_text ||
                    (text_length == 0 && char_is_lowercase(keys[column].text))) {
+========
+                if(model->clear_default_text || text_length == 0) {
+>>>>>>>> 6b6fe16fed0533ac7f28d9c141db26086b167de8:applications/external/wifi_marauder_companion/wifi_marauder_text_input.c
                     canvas_draw_glyph(
                         canvas,
                         keyboard_origin_x + keys[column].x,
                         keyboard_origin_y + keys[column].y,
+<<<<<<<< HEAD:applications/external/esp32cam_morseflasher/uart_text_input.c
                         //char_to_uppercase(keys[column].text));
                         keys[column].text);
+========
+                        char_to_uppercase(keys[column].text));
+>>>>>>>> 6b6fe16fed0533ac7f28d9c141db26086b167de8:applications/external/wifi_marauder_companion/wifi_marauder_text_input.c
                 } else {
                     canvas_draw_glyph(
                         canvas,
@@ -310,7 +538,7 @@ static void uart_text_input_view_draw_callback(Canvas* canvas, void* _model) {
             }
         }
     }
-    if(model->valadator_message_visible) {
+    if(model->validator_message_visible) {
         canvas_set_font(canvas, FontSecondary);
         canvas_set_color(canvas, ColorWhite);
         canvas_draw_box(canvas, 8, 10, 110, 48);
@@ -328,58 +556,115 @@ static void
     UNUSED(uart_text_input);
     if(model->selected_row > 0) {
         model->selected_row--;
-        if(model->selected_column > get_row_size(model->selected_row) - 6) {
+        if(model->selected_row == 0 &&
+           model->selected_column >
+               get_row_size(keyboards[model->selected_keyboard], model->selected_row) - 6) {
             model->selected_column = model->selected_column + 1;
         }
+        if(model->selected_row == 1 &&
+           model->selected_keyboard == symbol_keyboard.keyboard_index) {
+            if(model->selected_column > 5)
+                model->selected_column += 2;
+            else if(model->selected_column > 1)
+                model->selected_column += 1;
+        }
+    } else {
+        model->cursor_select = true;
+        model->clear_default_text = false;
     }
 }
 
 static void
+<<<<<<<< HEAD:applications/external/esp32cam_morseflasher/uart_text_input.c
     uart_text_input_handle_down(UART_TextInput* uart_text_input, UART_TextInputModel* model) {
     UNUSED(uart_text_input);
     if(model->selected_row < keyboard_row_count - 1) {
+========
+    wifi_text_input_handle_down(WIFI_TextInput* wifi_text_input, WIFI_TextInputModel* model) {
+    UNUSED(wifi_text_input);
+    if(model->cursor_select) {
+        model->cursor_select = false;
+    } else if(model->selected_row < keyboard_row_count - 1) {
+>>>>>>>> 6b6fe16fed0533ac7f28d9c141db26086b167de8:applications/external/wifi_marauder_companion/wifi_marauder_text_input.c
         model->selected_row++;
-        if(model->selected_column > get_row_size(model->selected_row) - 4) {
+        if(model->selected_row == 1 &&
+           model->selected_column >
+               get_row_size(keyboards[model->selected_keyboard], model->selected_row) - 4) {
             model->selected_column = model->selected_column - 1;
+        }
+        if(model->selected_row == 2 &&
+           model->selected_keyboard == symbol_keyboard.keyboard_index) {
+            if(model->selected_column > 7)
+                model->selected_column -= 2;
+            else if(model->selected_column > 1)
+                model->selected_column -= 1;
         }
     }
 }
 
 static void
+<<<<<<<< HEAD:applications/external/esp32cam_morseflasher/uart_text_input.c
     uart_text_input_handle_left(UART_TextInput* uart_text_input, UART_TextInputModel* model) {
     UNUSED(uart_text_input);
     if(model->selected_column > 0) {
+========
+    wifi_text_input_handle_left(WIFI_TextInput* wifi_text_input, WIFI_TextInputModel* model) {
+    UNUSED(wifi_text_input);
+    if(model->cursor_select) {
+        if(model->cursor_pos > 0) {
+            model->cursor_pos = CLAMP(model->cursor_pos - 1, strlen(model->text_buffer), 0u);
+        }
+    } else if(model->selected_column > 0) {
+>>>>>>>> 6b6fe16fed0533ac7f28d9c141db26086b167de8:applications/external/wifi_marauder_companion/wifi_marauder_text_input.c
         model->selected_column--;
     } else {
-        model->selected_column = get_row_size(model->selected_row) - 1;
+        model->selected_column =
+            get_row_size(keyboards[model->selected_keyboard], model->selected_row) - 1;
     }
 }
 
 static void
+<<<<<<<< HEAD:applications/external/esp32cam_morseflasher/uart_text_input.c
     uart_text_input_handle_right(UART_TextInput* uart_text_input, UART_TextInputModel* model) {
     UNUSED(uart_text_input);
     if(model->selected_column < get_row_size(model->selected_row) - 1) {
+========
+    wifi_text_input_handle_right(WIFI_TextInput* wifi_text_input, WIFI_TextInputModel* model) {
+    UNUSED(wifi_text_input);
+    if(model->cursor_select) {
+        model->cursor_pos = CLAMP(model->cursor_pos + 1, strlen(model->text_buffer), 0u);
+    } else if(
+        model->selected_column <
+        get_row_size(keyboards[model->selected_keyboard], model->selected_row) - 1) {
+>>>>>>>> 6b6fe16fed0533ac7f28d9c141db26086b167de8:applications/external/wifi_marauder_companion/wifi_marauder_text_input.c
         model->selected_column++;
     } else {
         model->selected_column = 0;
     }
 }
 
+<<<<<<<< HEAD:applications/external/esp32cam_morseflasher/uart_text_input.c
 static void uart_text_input_handle_ok(
     UART_TextInput* uart_text_input,
     UART_TextInputModel* model,
     bool shift) {
+========
+static void wifi_text_input_handle_ok(
+    WIFI_TextInput* wifi_text_input,
+    WIFI_TextInputModel* model,
+    InputType type) {
+    if(model->cursor_select) return;
+    bool shift = type == InputTypeLong;
+    bool repeat = type == InputTypeRepeat;
+>>>>>>>> 6b6fe16fed0533ac7f28d9c141db26086b167de8:applications/external/wifi_marauder_companion/wifi_marauder_text_input.c
     char selected = get_selected_char(model);
-    uint8_t text_length = strlen(model->text_buffer);
-
-    if(shift) {
-        selected = char_to_uppercase(selected);
-    }
+    size_t text_length = strlen(model->text_buffer);
 
     if(selected == ENTER_KEY) {
         if(model->validator_callback &&
            (!model->validator_callback(
                model->text_buffer, model->validator_text, model->validator_callback_context))) {
+<<<<<<<< HEAD:applications/external/esp32cam_morseflasher/uart_text_input.c
             model->valadator_message_visible = true;
             furi_timer_start(uart_text_input->timer, furi_kernel_get_tick_frequency() * 4);
         } else if(model->callback != 0 && text_length > 0) {
@@ -397,9 +682,40 @@ static void uart_text_input_handle_ok(
             }
             model->text_buffer[text_length] = selected;
             model->text_buffer[text_length + 1] = 0;
+========
+            model->validator_message_visible = true;
+            furi_timer_start(wifi_text_input->timer, furi_kernel_get_tick_frequency() * 4);
+        } else if(model->callback != 0 && text_length >= model->minimum_length) {
+            model->callback(model->callback_context);
         }
+    } else if(selected == SWITCH_KEYBOARD_KEY) {
+        switch_keyboard(model);
+    } else {
+        if(selected == BACKSPACE_KEY) {
+            wifi_text_input_backspace_cb(model);
+        } else if(!repeat) {
+            if(model->clear_default_text) {
+                text_length = 0;
+            }
+            if(text_length < (model->text_buffer_size - 1)) {
+                if(shift != (text_length == 0)) {
+                    selected = char_to_uppercase(selected);
+                }
+                if(model->clear_default_text) {
+                    model->text_buffer[0] = selected;
+                    model->text_buffer[1] = '\0';
+                    model->cursor_pos = 1;
+                } else {
+                    char* move = model->text_buffer + model->cursor_pos;
+                    memmove(move + 1, move, strlen(move) + 1);
+                    model->text_buffer[model->cursor_pos] = selected;
+                    model->cursor_pos++;
+                }
+            }
+>>>>>>>> 6b6fe16fed0533ac7f28d9c141db26086b167de8:applications/external/wifi_marauder_companion/wifi_marauder_text_input.c
+        }
+        model->clear_default_text = false;
     }
-    model->clear_default_text = false;
 }
 
 static bool uart_text_input_view_input_callback(InputEvent* event, void* context) {
@@ -412,8 +728,8 @@ static bool uart_text_input_view_input_callback(InputEvent* event, void* context
     UART_TextInputModel* model = view_get_model(uart_text_input->view);
 
     if((!(event->type == InputTypePress) && !(event->type == InputTypeRelease)) &&
-       model->valadator_message_visible) {
-        model->valadator_message_visible = false;
+       model->validator_message_visible) {
+        model->validator_message_visible = false;
         consumed = true;
     } else if(event->type == InputTypeShort) {
         consumed = true;
@@ -431,7 +747,11 @@ static bool uart_text_input_view_input_callback(InputEvent* event, void* context
             uart_text_input_handle_right(uart_text_input, model);
             break;
         case InputKeyOk:
+<<<<<<<< HEAD:applications/external/esp32cam_morseflasher/uart_text_input.c
             uart_text_input_handle_ok(uart_text_input, model, false);
+========
+            wifi_text_input_handle_ok(wifi_text_input, model, event->type);
+>>>>>>>> 6b6fe16fed0533ac7f28d9c141db26086b167de8:applications/external/wifi_marauder_companion/wifi_marauder_text_input.c
             break;
         default:
             consumed = false;
@@ -453,7 +773,11 @@ static bool uart_text_input_view_input_callback(InputEvent* event, void* context
             uart_text_input_handle_right(uart_text_input, model);
             break;
         case InputKeyOk:
+<<<<<<<< HEAD:applications/external/esp32cam_morseflasher/uart_text_input.c
             uart_text_input_handle_ok(uart_text_input, model, true);
+========
+            wifi_text_input_handle_ok(wifi_text_input, model, event->type);
+>>>>>>>> 6b6fe16fed0533ac7f28d9c141db26086b167de8:applications/external/wifi_marauder_companion/wifi_marauder_text_input.c
             break;
         case InputKeyBack:
             uart_text_input_backspace_cb(model);
@@ -477,6 +801,9 @@ static bool uart_text_input_view_input_callback(InputEvent* event, void* context
         case InputKeyRight:
             uart_text_input_handle_right(uart_text_input, model);
             break;
+        case InputKeyOk:
+            wifi_text_input_handle_ok(wifi_text_input, model, event->type);
+            break;
         case InputKeyBack:
             uart_text_input_backspace_cb(model);
             break;
@@ -497,9 +824,15 @@ void uart_text_input_timer_callback(void* context) {
     UART_TextInput* uart_text_input = context;
 
     with_view_model(
+<<<<<<<< HEAD:applications/external/esp32cam_morseflasher/uart_text_input.c
         uart_text_input->view,
         UART_TextInputModel * model,
         { model->valadator_message_visible = false; },
+========
+        wifi_text_input->view,
+        WIFI_TextInputModel * model,
+        { model->validator_message_visible = false; },
+>>>>>>>> 6b6fe16fed0533ac7f28d9c141db26086b167de8:applications/external/wifi_marauder_companion/wifi_marauder_text_input.c
         true);
 }
 
@@ -515,9 +848,20 @@ UART_TextInput* uart_text_input_alloc() {
         furi_timer_alloc(uart_text_input_timer_callback, FuriTimerTypeOnce, uart_text_input);
 
     with_view_model(
+<<<<<<<< HEAD:applications/external/esp32cam_morseflasher/uart_text_input.c
         uart_text_input->view,
         UART_TextInputModel * model,
         { model->validator_text = furi_string_alloc(); },
+========
+        wifi_text_input->view,
+        WIFI_TextInputModel * model,
+        {
+            model->validator_text = furi_string_alloc();
+            model->minimum_length = 1;
+            model->cursor_pos = 0;
+            model->cursor_select = false;
+        },
+>>>>>>>> 6b6fe16fed0533ac7f28d9c141db26086b167de8:applications/external/wifi_marauder_companion/wifi_marauder_text_input.c
         false);
 
     uart_text_input_reset(uart_text_input);
@@ -549,11 +893,14 @@ void uart_text_input_reset(UART_TextInput* uart_text_input) {
         uart_text_input->view,
         UART_TextInputModel * model,
         {
-            model->text_buffer_size = 0;
             model->header = "";
             model->selected_row = 0;
             model->selected_column = 0;
+            model->selected_keyboard = 0;
+            model->minimum_length = 1;
             model->clear_default_text = false;
+            model->cursor_pos = 0;
+            model->cursor_select = false;
             model->text_buffer = NULL;
             model->text_buffer_size = 0;
             model->callback = NULL;
@@ -561,7 +908,7 @@ void uart_text_input_reset(UART_TextInput* uart_text_input) {
             model->validator_callback = NULL;
             model->validator_callback_context = NULL;
             furi_string_reset(model->validator_text);
-            model->valadator_message_visible = false;
+            model->validator_message_visible = false;
         },
         true);
 }
@@ -587,18 +934,37 @@ void uart_text_input_set_result_callback(
             model->text_buffer = text_buffer;
             model->text_buffer_size = text_buffer_size;
             model->clear_default_text = clear_default_text;
+            model->cursor_select = false;
             if(text_buffer && text_buffer[0] != '\0') {
+                model->cursor_pos = strlen(text_buffer);
                 // Set focus on Save
                 model->selected_row = 2;
-                model->selected_column = 8;
+                model->selected_column = 9;
+                model->selected_keyboard = 0;
+            } else {
+                model->cursor_pos = 0;
             }
         },
         true);
 }
 
+<<<<<<<< HEAD:applications/external/esp32cam_morseflasher/uart_text_input.c
 void uart_text_input_set_validator(
     UART_TextInput* uart_text_input,
     UART_TextInputValidatorCallback callback,
+========
+void wifi_text_input_set_minimum_length(WIFI_TextInput* wifi_text_input, size_t minimum_length) {
+    with_view_model(
+        wifi_text_input->view,
+        WIFI_TextInputModel * model,
+        { model->minimum_length = minimum_length; },
+        true);
+}
+
+void wifi_text_input_set_validator(
+    WIFI_TextInput* wifi_text_input,
+    WIFI_TextInputValidatorCallback callback,
+>>>>>>>> 6b6fe16fed0533ac7f28d9c141db26086b167de8:applications/external/wifi_marauder_companion/wifi_marauder_text_input.c
     void* callback_context) {
     with_view_model(
         uart_text_input->view,

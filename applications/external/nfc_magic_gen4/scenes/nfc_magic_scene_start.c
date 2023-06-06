@@ -38,13 +38,13 @@ bool nfc_magic_scene_start_on_event(void* context, SceneManagerEvent event) {
     if(event.type == SceneManagerEventTypeCustom) {
         if(event.event == SubmenuIndexCheck) {
             nfc_magic->dev->password = MAGIC_GEN4_DEFAULT_PWD;
+            scene_manager_set_scene_state(
+                nfc_magic->scene_manager, NfcMagicSceneStart, SubmenuIndexCheck);
             scene_manager_next_scene(nfc_magic->scene_manager, NfcMagicSceneCheck);
             consumed = true;
         } else if(event.event == SubmenuIndexAuthenticateGen4) {
             scene_manager_next_scene(nfc_magic->scene_manager, NfcMagicSceneKeyInput);
-            consumed = true;
         }
-        scene_manager_set_scene_state(nfc_magic->scene_manager, NfcMagicSceneStart, event.event);
     }
 
     return consumed;

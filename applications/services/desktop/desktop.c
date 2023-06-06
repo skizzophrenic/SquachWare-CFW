@@ -9,6 +9,7 @@
 #include <furi_hal.h>
 #include <cli/cli.h>
 #include <cli/cli_vcp.h>
+#include <locale/locale.h>
 
 #include "animations/animation_manager.h"
 #include "desktop/scenes/desktop_scene.h"
@@ -162,6 +163,108 @@ static void desktop_topbar_icon_draw_callback(Canvas* canvas, void* context) {
     canvas_set_bitmap_mode(canvas, 0);
 }
 
+static void desktop_clock_upd_time(Desktop* desktop, bool forced) {
+    furi_assert(desktop);
+
+    FuriHalRtcDateTime curr_dt;
+    furi_hal_rtc_get_datetime(&curr_dt);
+
+    if(forced) {
+        desktop->clock_type = (locale_get_time_format() == LocaleTimeFormat24h);
+    }
+
+    if(forced || (desktop->minute != curr_dt.minute)) {
+        if(desktop->clock_type) {
+            desktop->hour = curr_dt.hour;
+        } else {
+            desktop->hour = (curr_dt.hour > 12) ? curr_dt.hour - 12 :
+                                                  ((curr_dt.hour == 0) ? 12 : curr_dt.hour);
+        }
+        desktop->minute = curr_dt.minute;
+        view_port_update(desktop->clock_viewport);
+    }
+}
+
+static void desktop_clock_toggle_view(Desktop* desktop, bool is_enabled) {
+    furi_assert(desktop);
+
+    desktop_clock_upd_time(desktop, true);
+
+    if(is_enabled) { // && !furi_timer_is_running(desktop->update_clock_timer)) {
+        furi_timer_start(desktop->update_clock_timer, furi_ms_to_ticks(1000));
+    } else if(!is_enabled) { //&& furi_timer_is_running(desktop->update_clock_timer)) {
+        furi_timer_stop(desktop->update_clock_timer);
+    }
+
+    switch(desktop->settings.icon_style) {
+    case ICON_STYLE_SLIM:
+        view_port_enabled_set(desktop->clock_slim_viewport, is_enabled);
+        view_port_enabled_set(desktop->clock_viewport, false);
+        break;
+    case ICON_STYLE_STOCK:
+        view_port_enabled_set(desktop->clock_slim_viewport, false);
+        view_port_enabled_set(desktop->clock_viewport, is_enabled);
+        break;
+    }
+}
+
+static uint8_t desktop_clock_get_num_w(uint8_t num) {
+    if(num == 1) {
+        return 3;
+    } else if(num == 4) {
+        return 6;
+    } else {
+        return 5;
+    }
+}
+
+static const char* digit[10] = {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9"};
+
+static void desktop_clock_draw_callback(Canvas* canvas, void* context) {
+    furi_assert(context);
+    furi_assert(canvas);
+
+    Desktop* desktop = context;
+
+    uint8_t d[4] = {
+        desktop->minute % 10,
+        desktop->minute / 10,
+        desktop->hour % 10,
+        desktop->hour / 10,
+    };
+
+    canvas_set_font(canvas, FontPrimary);
+
+    uint8_t new_w = desktop_clock_get_num_w(d[0]) + //c1
+                    desktop_clock_get_num_w(d[1]) + //c2
+                    desktop_clock_get_num_w(d[2]) + //c3
+                    desktop_clock_get_num_w(d[3]) + //c4
+                    2 + 4; // ":" + 4 separators
+
+    // further away from the battery charge indicator, if the smallest minute is 1
+    view_port_set_width(desktop->clock_viewport, new_w - !(d[0] == 1));
+    view_port_set_width(desktop->clock_slim_viewport, new_w - !(d[0] == 1));
+
+    uint8_t x = new_w;
+
+    uint8_t y = 8;
+    uint8_t offset_r;
+
+    canvas_draw_str_aligned(canvas, x, y, AlignRight, AlignBottom, digit[d[0]]);
+    offset_r = desktop_clock_get_num_w(d[0]);
+
+    canvas_draw_str_aligned(canvas, x -= (offset_r + 1), y, AlignRight, AlignBottom, digit[d[1]]);
+    offset_r = desktop_clock_get_num_w(d[1]);
+
+    canvas_draw_str_aligned(canvas, x -= (offset_r + 1), y - 1, AlignRight, AlignBottom, ":");
+    offset_r = 2;
+
+    canvas_draw_str_aligned(canvas, x -= (offset_r + 1), y, AlignRight, AlignBottom, digit[d[2]]);
+    offset_r = desktop_clock_get_num_w(d[2]);
+
+    canvas_draw_str_aligned(canvas, x -= (offset_r + 1), y, AlignRight, AlignBottom, digit[d[3]]);
+}
+
 static void desktop_stealth_mode_icon_draw_callback(Canvas* canvas, void* context) {
     UNUSED(context);
     furi_assert(canvas);
@@ -182,6 +285,9 @@ static bool desktop_custom_event_callback(void* context, uint32_t event) {
         // TODO: Implement a message mechanism for loading settings and (optionally)
         // locking and unlocking
         DESKTOP_SETTINGS_LOAD(&desktop->settings);
+
+        desktop_clock_toggle_view(desktop, desktop->settings.display_clock);
+
         desktop_auto_lock_arm(desktop);
         return true;
     case DesktopGlobalAutoLock:
@@ -298,6 +404,64 @@ static void desktop_auto_lock_inhibit(Desktop* desktop) {
     }
 }
 
+static void desktop_clock_timer_callback(void* context) {
+    furi_assert(context);
+    Desktop* desktop = context;
+
+    switch(desktop->settings.icon_style) {
+    case ICON_STYLE_SLIM:
+        if(gui_get_count_of_enabled_view_port_in_layer(desktop->gui, GuiLayerStatusBarLeftSlim) <
+           6) {
+            desktop_clock_upd_time(desktop, false);
+            FuriHalRtcDateTime curr_dt;
+            furi_hal_rtc_get_datetime(&curr_dt);
+
+            if(desktop->minute != curr_dt.minute) {
+                if(desktop->clock_type) {
+                    desktop->hour = curr_dt.hour;
+                } else {
+                    desktop->hour = (curr_dt.hour > 12) ?
+                                        curr_dt.hour - 12 :
+                                        ((curr_dt.hour == 0) ? 12 : curr_dt.hour);
+                }
+                desktop->minute = curr_dt.minute;
+                view_port_update(desktop->clock_slim_viewport);
+            }
+            view_port_enabled_set(desktop->clock_slim_viewport, true);
+            view_port_enabled_set(desktop->clock_viewport, false);
+        } else {
+            view_port_enabled_set(desktop->clock_slim_viewport, false);
+            view_port_enabled_set(desktop->clock_viewport, false);
+        }
+        break;
+    case ICON_STYLE_STOCK:
+        if(gui_get_count_of_enabled_view_port_in_layer(desktop->gui, GuiLayerStatusBarLeft) < 6) {
+            desktop_clock_upd_time(desktop, false);
+            FuriHalRtcDateTime curr_dt;
+            furi_hal_rtc_get_datetime(&curr_dt);
+
+            if(desktop->minute != curr_dt.minute) {
+                if(desktop->clock_type) {
+                    desktop->hour = curr_dt.hour;
+                } else {
+                    desktop->hour = (curr_dt.hour > 12) ?
+                                        curr_dt.hour - 12 :
+                                        ((curr_dt.hour == 0) ? 12 : curr_dt.hour);
+                }
+                desktop->minute = curr_dt.minute;
+                view_port_update(desktop->clock_viewport);
+            }
+
+            view_port_enabled_set(desktop->clock_slim_viewport, false);
+            view_port_enabled_set(desktop->clock_viewport, true);
+        } else {
+            view_port_enabled_set(desktop->clock_slim_viewport, false);
+            view_port_enabled_set(desktop->clock_viewport, false);
+        }
+        break;
+    }
+}
+
 void desktop_lock(Desktop* desktop) {
     furi_hal_rtc_set_flag(FuriHalRtcFlagLock);
 
@@ -312,6 +476,9 @@ void desktop_lock(Desktop* desktop) {
         desktop->scene_manager, DesktopSceneLocked, SCENE_LOCKED_FIRST_ENTER);
     scene_manager_next_scene(desktop->scene_manager, DesktopSceneLocked);
     notification_message(desktop->notification, &sequence_display_backlight_off_delay_1000);
+
+    DesktopStatus status = {.locked = true};
+    furi_pubsub_publish(desktop->status_pubsub, &status);
 }
 
 void desktop_unlock(Desktop* desktop) {
@@ -331,6 +498,9 @@ void desktop_unlock(Desktop* desktop) {
         cli_session_open(cli, &cli_vcp);
         furi_record_close(RECORD_CLI);
     }
+
+    DesktopStatus status = {.locked = false};
+    furi_pubsub_publish(desktop->status_pubsub, &status);
 }
 
 void desktop_set_dummy_mode_state(Desktop* desktop, bool enabled) {
@@ -516,6 +686,21 @@ Desktop* desktop_alloc() {
     view_port_enabled_set(desktop->bt_icon_slim_viewport, false);
     gui_add_view_port(desktop->gui, desktop->bt_icon_slim_viewport, GuiLayerStatusBarLeftSlim);
 
+    // Clock
+    desktop->clock_viewport = view_port_alloc();
+    view_port_set_width(desktop->clock_viewport, 25);
+    view_port_draw_callback_set(desktop->clock_viewport, desktop_clock_draw_callback, desktop);
+    view_port_enabled_set(desktop->clock_viewport, false);
+    gui_add_view_port(desktop->gui, desktop->clock_viewport, GuiLayerStatusBarRight);
+
+    // Clock Slim
+    desktop->clock_slim_viewport = view_port_alloc();
+    view_port_set_width(desktop->clock_slim_viewport, 25);
+    view_port_draw_callback_set(
+        desktop->clock_slim_viewport, desktop_clock_draw_callback, desktop);
+    view_port_enabled_set(desktop->clock_slim_viewport, false);
+    gui_add_view_port(desktop->gui, desktop->clock_slim_viewport, GuiLayerStatusBarRightSlim);
+
     // Stealth mode icon
     desktop->stealth_mode_icon_viewport = view_port_alloc();
     view_port_set_width(desktop->stealth_mode_icon_viewport, icon_get_width(&I_Muted_8x8));
@@ -560,6 +745,16 @@ Desktop* desktop_alloc() {
     desktop->auto_lock_timer =
         furi_timer_alloc(desktop_auto_lock_timer_callback, FuriTimerTypeOnce, desktop);
 
+    desktop->status_pubsub = furi_pubsub_alloc();
+
+    desktop->update_clock_timer =
+        furi_timer_alloc(desktop_clock_timer_callback, FuriTimerTypePeriodic, desktop);
+
+    FuriHalRtcDateTime curr_dt;
+    furi_hal_rtc_get_datetime(&curr_dt);
+
+    desktop_clock_upd_time(desktop, true);
+
     desktop->sdcard_status = false;
     Storage* storage = furi_record_open(RECORD_STORAGE);
     desktop->storage_sub = furi_pubsub_subscribe(
@@ -571,80 +766,6 @@ Desktop* desktop_alloc() {
     furi_record_create(RECORD_DESKTOP, desktop);
 
     return desktop;
-}
-
-void desktop_free(Desktop* desktop) {
-    furi_assert(desktop);
-    furi_check(furi_record_destroy(RECORD_DESKTOP));
-
-    furi_pubsub_unsubscribe(
-        loader_get_pubsub(desktop->loader), desktop->app_start_stop_subscription);
-
-    if(desktop->input_events_subscription) {
-        furi_pubsub_unsubscribe(desktop->input_events_pubsub, desktop->input_events_subscription);
-        desktop->input_events_subscription = NULL;
-    }
-
-    Storage* storage = furi_record_open(RECORD_STORAGE);
-    furi_pubsub_unsubscribe(storage_get_pubsub(storage), desktop->storage_sub);
-    furi_record_close(RECORD_STORAGE);
-    desktop->storage_sub = NULL;
-
-    furi_record_close(RECORD_BT);
-    desktop->bt = NULL;
-
-    desktop->loader = NULL;
-    desktop->input_events_pubsub = NULL;
-    furi_record_close(RECORD_LOADER);
-    furi_record_close(RECORD_NOTIFICATION);
-    furi_record_close(RECORD_INPUT_EVENTS);
-
-    //free the viewports
-    free(desktop->lock_icon_viewport);
-    free(desktop->dummy_mode_icon_viewport);
-    free(desktop->topbar_icon_viewport);
-    free(desktop->sdcard_icon_viewport);
-    free(desktop->bt_icon_viewport);
-    free(desktop->stealth_mode_icon_viewport);
-
-    free(desktop->lock_icon_slim_viewport);
-    free(desktop->dummy_mode_icon_slim_viewport);
-    free(desktop->sdcard_icon_slim_viewport);
-    free(desktop->bt_icon_slim_viewport);
-    free(desktop->stealth_mode_icon_slim_viewport);
-
-    view_dispatcher_remove_view(desktop->view_dispatcher, DesktopViewIdMain);
-    view_dispatcher_remove_view(desktop->view_dispatcher, DesktopViewIdLockMenu);
-    view_dispatcher_remove_view(desktop->view_dispatcher, DesktopViewIdLocked);
-    view_dispatcher_remove_view(desktop->view_dispatcher, DesktopViewIdDebug);
-    view_dispatcher_remove_view(desktop->view_dispatcher, DesktopViewIdHwMismatch);
-    view_dispatcher_remove_view(desktop->view_dispatcher, DesktopViewIdPinInput);
-    view_dispatcher_remove_view(desktop->view_dispatcher, DesktopViewIdPinTimeout);
-
-    view_dispatcher_free(desktop->view_dispatcher);
-    scene_manager_free(desktop->scene_manager);
-
-    animation_manager_free(desktop->animation_manager);
-    view_stack_free(desktop->main_view_stack);
-    desktop_main_free(desktop->main_view);
-    view_stack_free(desktop->locked_view_stack);
-    desktop_view_locked_free(desktop->locked_view);
-    desktop_lock_menu_free(desktop->lock_menu);
-    desktop_view_locked_free(desktop->locked_view);
-    desktop_debug_free(desktop->debug_view);
-    popup_free(desktop->hw_mismatch_popup);
-    desktop_view_pin_timeout_free(desktop->pin_timeout_view);
-
-    furi_record_close(RECORD_GUI);
-    desktop->gui = NULL;
-
-    furi_thread_free(desktop->scene_thread);
-
-    furi_record_close("menu");
-
-    furi_timer_free(desktop->auto_lock_timer);
-
-    free(desktop);
 }
 
 static bool desktop_check_file_flag(const char* flag_path) {
@@ -663,6 +784,11 @@ bool desktop_api_is_locked(Desktop* instance) {
 void desktop_api_unlock(Desktop* instance) {
     furi_assert(instance);
     view_dispatcher_send_custom_event(instance->view_dispatcher, DesktopLockedEventUnlocked);
+}
+
+FuriPubSub* desktop_api_get_status_pubsub(Desktop* instance) {
+    furi_assert(instance);
+    return instance->status_pubsub;
 }
 
 int32_t desktop_srv(void* p) {
@@ -737,6 +863,10 @@ int32_t desktop_srv(void* p) {
         break;
     }
 
+    view_port_enabled_set(desktop->dummy_mode_icon_viewport, desktop->settings.dummy_mode);
+
+    desktop_clock_toggle_view(desktop, desktop->settings.display_clock);
+
     desktop_main_set_dummy_mode_state(desktop->main_view, desktop->settings.dummy_mode);
     animation_manager_set_dummy_mode_state(
         desktop->animation_manager, desktop->settings.dummy_mode);
@@ -764,7 +894,8 @@ int32_t desktop_srv(void* p) {
     }
 
     view_dispatcher_run(desktop->view_dispatcher);
-    desktop_free(desktop);
+
+    furi_crash("That was unexpected");
 
     return 0;
 }

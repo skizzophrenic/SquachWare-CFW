@@ -11,6 +11,7 @@
 #include <toolbox/path.h>
 #include <flipper_application/flipper_application.h>
 #include <loader/firmware_api/firmware_api.h>
+#include <storage/storage_processing.h>
 
 #define TAG "FapLoader"
 
@@ -30,6 +31,18 @@ bool fap_loader_load_name_and_icon(
     Storage* storage,
     uint8_t** icon_ptr,
     FuriString* item_name) {
+    StorageData* storage_data;
+    if(storage_get_data(storage, path, &storage_data) == FSE_OK &&
+       storage_path_already_open(path, storage_data)) {
+        size_t offset = furi_string_search_rchar(path, '/');
+        if(offset != FURI_STRING_FAILURE) {
+            furi_string_set_n(item_name, path, offset + 1, furi_string_size(path) - offset - 1);
+        } else {
+            furi_string_set(item_name, path);
+        }
+        return false;
+    }
+
     FlipperApplication* app = flipper_application_alloc(storage, firmware_api_interface);
 
     FlipperApplicationPreloadStatus preload_res =
@@ -40,13 +53,19 @@ bool fap_loader_load_name_and_icon(
     if(preload_res == FlipperApplicationPreloadStatusSuccess ||
        preload_res == FlipperApplicationPreloadStatusApiMismatch) {
         const FlipperApplicationManifest* manifest = flipper_application_get_manifest(app);
-        if(manifest->has_icon) {
+        if(manifest->has_icon && icon_ptr != NULL && *icon_ptr != NULL) {
             memcpy(*icon_ptr, manifest->icon, FAP_MANIFEST_MAX_ICON_SIZE);
         }
         furi_string_set(item_name, manifest->name);
         load_success = true;
     } else {
         FURI_LOG_E(TAG, "FAP Loader failed to preload %s", furi_string_get_cstr(path));
+        size_t offset = furi_string_search_rchar(path, '/');
+        if(offset != FURI_STRING_FAILURE) {
+            furi_string_set_n(item_name, path, offset + 1, furi_string_size(path) - offset - 1);
+        } else {
+            furi_string_set(item_name, path);
+        }
         load_success = false;
     }
 
@@ -214,6 +233,7 @@ static bool fap_loader_select_app(FapLoader* loader) {
         .skip_assets = true,
         .icon = &I_unknown_10px,
         .hide_ext = true,
+        .hide_dot_files = true,
         .item_loader_callback = fap_loader_item_callback,
         .item_loader_context = loader,
         .base_path = EXT_PATH("apps"),

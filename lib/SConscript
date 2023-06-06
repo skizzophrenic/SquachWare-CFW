@@ -15,14 +15,12 @@ env.Append(
         Dir("u8g2"),
         Dir("update_util"),
         Dir("print"),
-        Dir("pulse_reader"),
     ],
     SDK_HEADERS=[
         File("ibutton/ibutton_worker.h"),
         File("one_wire/one_wire_host.h"),
         File("one_wire/one_wire_slave.h"),
         File("one_wire/maxim_crc.h"),
-        File("u8g2/u8g2.h"),
     ],
 )
 
@@ -51,7 +49,6 @@ env.Append(
                 "variant",
             )
         ),
-        File("u8g2/u8g2.h"),
         File("cfw/cfw.h"),
     ],
     CPPDEFINES=[
@@ -104,6 +101,7 @@ libs = env.BuildModules(
         "mbedtls",
         "subghz",
         "nfc",
+        "digital_signal",
         "pulse_reader",
         "appframe",
         "misc",

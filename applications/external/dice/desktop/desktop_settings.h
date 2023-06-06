@@ -30,7 +30,7 @@
 #define ICON_STYLE_STOCK 0
 #define ICON_STYLE_SLIM 1
 
-#define FAP_LOADER_APP_NAME "Apps"
+#define FAP_LOADER_APP_NAME "Applications"
 
 typedef struct {
     InputKey data[MAX_PIN_SIZE];
