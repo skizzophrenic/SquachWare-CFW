@@ -6,7 +6,7 @@
 #include <input/input.h>
 #include <dolphin/dolphin.h>
 #include "DICE_icons.h"
-#include "desktop/desktop_settings.h"
+#include "applications/settings/desktop_settings/desktop_settings_app.h"
 
 #define TAG "Dice Roller"
 
@@ -319,9 +319,9 @@ static void dice_render_callback(Canvas* const canvas, void* ctx) {
                 state->diceType[0],
                 state->rollTime[0]);
             if(state->diceSelect >= 20 && state->diceRoll == state->diceSelect)
-                DOLPHIN_DEED(getRandomDeed());
+                dolphin_deed(getRandomDeed());
             if(state->diceSelect >= 20 && state->diceRoll == state->diceSelect - 1)
-                DOLPHIN_DEED(getRandomDeed());
+                dolphin_deed(getRandomDeed());
             if(state->diceQty == 1) {
                 snprintf(state->strings[1], sizeof(state->strings[1]), "%d", state->diceRoll);
             } else if(state->diceQty == 2) {
