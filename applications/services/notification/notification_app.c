@@ -4,9 +4,6 @@
 #include <storage/storage.h>
 #include <toolbox/saved_struct.h>
 #include <input/input.h>
-#include <gui/gui_i.h>
-#include <u8g2_glue.h>
-
 #include "notification.h"
 #include "notification_messages.h"
 #include "notification_app.h"
@@ -24,14 +21,14 @@ static const uint8_t reset_sound_mask = 1 << 4;
 static const uint8_t reset_display_mask = 1 << 5;
 static const uint8_t reset_blink_mask = 1 << 6;
 
-static void notification_vibro_on(bool force);
-static void notification_vibro_off();
-static void notification_sound_on(float freq, float volume, bool force);
-static void notification_sound_off();
+void notification_vibro_on(bool force);
+void notification_vibro_off();
+void notification_sound_on(float freq, float volume, bool force);
+void notification_sound_off();
 
-static uint8_t notification_settings_get_display_brightness(NotificationApp* app, uint8_t value);
-static uint8_t notification_settings_get_rgb_led_brightness(NotificationApp* app, uint8_t value);
-static uint32_t notification_settings_display_off_delay_ticks(NotificationApp* app);
+uint8_t notification_settings_get_display_brightness(NotificationApp* app, uint8_t value);
+uint8_t notification_settings_get_rgb_led_brightness(NotificationApp* app, uint8_t value);
+uint32_t notification_settings_display_off_delay_ticks(NotificationApp* app);
 
 void notification_message_save_settings(NotificationApp* app) {
     NotificationAppMessage m = {
@@ -43,8 +40,7 @@ void notification_message_save_settings(NotificationApp* app) {
 }
 
 // internal layer
-static void
-    notification_apply_internal_led_layer(NotificationLedLayer* layer, uint8_t layer_value) {
+void notification_apply_internal_led_layer(NotificationLedLayer* layer, uint8_t layer_value) {
     furi_assert(layer);
     furi_assert(layer->index < LayerMAX);
 
@@ -57,13 +53,7 @@ static void
     }
 }
 
-static void notification_apply_lcd_contrast(NotificationApp* app) {
-    Gui* gui = furi_record_open(RECORD_GUI);
-    u8x8_d_st756x_set_contrast(&gui->canvas->fb.u8x8, app->settings.contrast);
-    furi_record_close(RECORD_GUI);
-}
-
-static bool notification_is_any_led_layer_internal_and_not_empty(NotificationApp* app) {
+bool notification_is_any_led_layer_internal_and_not_empty(NotificationApp* app) {
     bool result = false;
     if((app->led[0].index == LayerInternal) || (app->led[1].index == LayerInternal) ||
        (app->led[2].index == LayerInternal)) {
@@ -78,7 +68,7 @@ static bool notification_is_any_led_layer_internal_and_not_empty(NotificationApp
 }
 
 // notification layer
-static void notification_apply_notification_led_layer(
+void notification_apply_notification_led_layer(
     NotificationLedLayer* layer,
     const uint8_t layer_value) {
     furi_assert(layer);
@@ -92,7 +82,7 @@ static void notification_apply_notification_led_layer(
     furi_hal_light_set(layer->light, layer->value[LayerNotification]);
 }
 
-static void notification_reset_notification_led_layer(NotificationLedLayer* layer) {
+void notification_reset_notification_led_layer(NotificationLedLayer* layer) {
     furi_assert(layer);
     furi_assert(layer->index < LayerMAX);
 
@@ -105,7 +95,7 @@ static void notification_reset_notification_led_layer(NotificationLedLayer* laye
     furi_hal_light_set(layer->light, layer->value[LayerInternal]);
 }
 
-static void notification_reset_notification_layer(NotificationApp* app, uint8_t reset_mask) {
+void notification_reset_notification_layer(NotificationApp* app, uint8_t reset_mask) {
     if(reset_mask & reset_blink_mask) {
         furi_hal_light_blink_stop();
     }
@@ -141,28 +131,28 @@ uint8_t notification_settings_get_display_brightness(NotificationApp* app, uint8
     return (value * app->settings.display_brightness);
 }
 
-static uint8_t notification_settings_get_rgb_led_brightness(NotificationApp* app, uint8_t value) {
+uint8_t notification_settings_get_rgb_led_brightness(NotificationApp* app, uint8_t value) {
     return (value * app->settings.led_brightness);
 }
 
-static uint32_t notification_settings_display_off_delay_ticks(NotificationApp* app) {
+uint32_t notification_settings_display_off_delay_ticks(NotificationApp* app) {
     return (
         (float)(app->settings.display_off_delay_ms) /
         (1000.0f / furi_kernel_get_tick_frequency()));
 }
 
 // generics
-static void notification_vibro_on(bool force) {
+void notification_vibro_on(bool force) {
     if(!furi_hal_rtc_is_flag_set(FuriHalRtcFlagStealthMode) || force) {
         furi_hal_vibro_on(true);
     }
 }
 
-static void notification_vibro_off() {
+void notification_vibro_off() {
     furi_hal_vibro_on(false);
 }
 
-static void notification_sound_on(float freq, float volume, bool force) {
+void notification_sound_on(float freq, float volume, bool force) {
     if(!furi_hal_rtc_is_flag_set(FuriHalRtcFlagStealthMode) || force) {
         if(furi_hal_speaker_is_mine() || furi_hal_speaker_acquire(30)) {
             furi_hal_speaker_start(freq, volume);
@@ -170,7 +160,7 @@ static void notification_sound_on(float freq, float volume, bool force) {
     }
 }
 
-static void notification_sound_off() {
+void notification_sound_off() {
     if(furi_hal_speaker_is_mine()) {
         furi_hal_speaker_stop();
         furi_hal_speaker_release();
@@ -185,7 +175,7 @@ static void notification_display_timer(void* ctx) {
 }
 
 // message processing
-static void notification_process_notification_message(
+void notification_process_notification_message(
     NotificationApp* app,
     NotificationAppMessage* message) {
     uint32_t notification_message_index = 0;
@@ -344,9 +334,6 @@ static void notification_process_notification_message(
             reset_mask |= reset_green_mask;
             reset_mask |= reset_blue_mask;
             break;
-        case NotificationMessageTypeLcdContrastUpdate:
-            notification_apply_lcd_contrast(app);
-            break;
         }
         notification_message_index++;
         notification_message = (*message->sequence)[notification_message_index];
@@ -375,8 +362,7 @@ static void notification_process_notification_message(
     }
 }
 
-static void
-    notification_process_internal_message(NotificationApp* app, NotificationAppMessage* message) {
+void notification_process_internal_message(NotificationApp* app, NotificationAppMessage* message) {
     uint32_t notification_message_index = 0;
     const NotificationMessage* notification_message;
     notification_message = (*message->sequence)[notification_message_index];
@@ -509,7 +495,6 @@ int32_t notification_srv(void* p) {
     notification_apply_internal_led_layer(&app->led[0], 0x00);
     notification_apply_internal_led_layer(&app->led[1], 0x00);
     notification_apply_internal_led_layer(&app->led[2], 0x00);
-    notification_apply_lcd_contrast(app);
 
     furi_record_create(RECORD_NOTIFICATION, app);
 

@@ -19,7 +19,7 @@ void picopass_scene_device_info_on_enter(void* context) {
     FuriString* wiegand_str = furi_string_alloc();
     FuriString* sio_str = furi_string_alloc();
 
-    dolphin_deed(DolphinDeedNfcReadSuccess);
+    DOLPHIN_DEED(DolphinDeedNfcReadSuccess);
 
     // Setup view
     PicopassBlock* AA1 = picopass->dev->dev_data.AA1;

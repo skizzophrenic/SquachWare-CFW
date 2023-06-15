@@ -13,7 +13,7 @@ void nfc_scene_passport_read_on_enter(void* context) {
     FuriHalNfcDevData* data = &nfc->dev->dev_data.nfc_data;
     MrtdData* mrtd_data = &nfc->dev->dev_data.mrtd_data;
 
-    dolphin_deed(DolphinDeedNfcReadSuccess);
+    DOLPHIN_DEED(DolphinDeedNfcReadSuccess);
 
     Widget* widget = nfc->widget;
 

@@ -258,7 +258,7 @@ static void flappy_game_render_callback(Canvas* const canvas, void* ctx) {
         canvas_draw_str(canvas, 37, 31, "Game Over");
 
         if(game_state->points != 0 && game_state->points % 5 == 0) {
-            dolphin_deed(getRandomDeed());
+            DOLPHIN_DEED(getRandomDeed());
         }
 
         canvas_set_font(canvas, FontSecondary);
@@ -314,7 +314,7 @@ int32_t flappy_game_app(void* p) {
     gui_add_view_port(gui, view_port, GuiLayerFullscreen);
 
     // Call dolphin deed on game start
-    dolphin_deed(DolphinDeedPluginGameStart);
+    DOLPHIN_DEED(DolphinDeedPluginGameStart);
 
     GameEvent event;
     for(bool processing = true; processing;) {

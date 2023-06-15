@@ -9,7 +9,7 @@ void picopass_write_card_worker_callback(PicopassWorkerEvent event, void* contex
 
 void picopass_scene_write_card_on_enter(void* context) {
     Picopass* picopass = context;
-    dolphin_deed(DolphinDeedNfcSave);
+    DOLPHIN_DEED(DolphinDeedNfcSave);
 
     // Setup view
     Popup* popup = picopass->popup;

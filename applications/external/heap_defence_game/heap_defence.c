@@ -535,7 +535,7 @@ int32_t heap_defence_app(void* p) {
     game->animation = AnimationPause;
 
     // Call dolphin deed on game start
-    dolphin_deed(DolphinDeedPluginGameStart);
+    DOLPHIN_DEED(DolphinDeedPluginGameStart);
 
     GameEvent event = {0};
     while(event.input.key != InputKeyBack) {

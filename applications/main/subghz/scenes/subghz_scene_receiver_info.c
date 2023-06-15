@@ -109,10 +109,6 @@ void subghz_scene_receiver_info_on_enter(void* context) {
     subghz_custom_btns_reset();
 
     subghz_scene_receiver_info_draw_widget(subghz);
-
-    if(!subghz_history_get_text_space_left(subghz->history, NULL)) {
-        subghz->state_notifications = SubGhzNotificationStateRx;
-    }
 }
 
 bool subghz_scene_receiver_info_on_event(void* context, SceneManagerEvent event) {
@@ -146,9 +142,7 @@ bool subghz_scene_receiver_info_on_event(void* context, SceneManagerEvent event)
                 subghz_txrx_rx_start(subghz->txrx);
 
                 subghz_txrx_hopper_unpause(subghz->txrx);
-                if(!subghz_history_get_text_space_left(subghz->history, NULL)) {
-                    subghz->state_notifications = SubGhzNotificationStateRx;
-                }
+                subghz->state_notifications = SubGhzNotificationStateRx;
             }
             return true;
         } else if(event.event == SubGhzCustomEventSceneReceiverInfoSave) {

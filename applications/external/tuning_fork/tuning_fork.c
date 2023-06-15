@@ -138,7 +138,8 @@ static void render_callback(Canvas* const canvas, void* ctx) {
     TuningForkState* tuning_fork_state = ctx;
     furi_mutex_acquire(tuning_fork_state->mutex, FuriWaitForever);
 
-    FuriString* tempStr = furi_string_alloc();
+    string_t tempStr;
+    string_init(tempStr);
 
     canvas_draw_frame(canvas, 0, 0, 128, 64);
 
@@ -147,24 +148,23 @@ static void render_callback(Canvas* const canvas, void* ctx) {
     if(tuning_fork_state->page == Tunings) {
         char tuningLabel[20];
         current_tuning_label(tuning_fork_state, tuningLabel);
-        furi_string_printf(tempStr, "< %s >", tuningLabel);
+        string_printf(tempStr, "< %s >", tuningLabel);
         canvas_draw_str_aligned(
-            canvas, 64, 28, AlignCenter, AlignCenter, furi_string_get_cstr(tempStr));
-        furi_string_reset(tempStr);
+            canvas, 64, 28, AlignCenter, AlignCenter, string_get_cstr(tempStr));
+        string_reset(tempStr);
     } else {
         char tuningLabel[20];
         current_tuning_label(tuning_fork_state, tuningLabel);
-        furi_string_printf(tempStr, "%s", tuningLabel);
-        canvas_draw_str_aligned(
-            canvas, 64, 8, AlignCenter, AlignCenter, furi_string_get_cstr(tempStr));
-        furi_string_reset(tempStr);
+        string_printf(tempStr, "%s", tuningLabel);
+        canvas_draw_str_aligned(canvas, 64, 8, AlignCenter, AlignCenter, string_get_cstr(tempStr));
+        string_reset(tempStr);
 
         char tuningNoteLabel[20];
         current_tuning_note_label(tuning_fork_state, tuningNoteLabel);
-        furi_string_printf(tempStr, "< %s >", tuningNoteLabel);
+        string_printf(tempStr, "< %s >", tuningNoteLabel);
         canvas_draw_str_aligned(
-            canvas, 64, 24, AlignCenter, AlignCenter, furi_string_get_cstr(tempStr));
-        furi_string_reset(tempStr);
+            canvas, 64, 24, AlignCenter, AlignCenter, string_get_cstr(tempStr));
+        string_reset(tempStr);
     }
 
     canvas_set_font(canvas, FontSecondary);
@@ -184,7 +184,7 @@ static void render_callback(Canvas* const canvas, void* ctx) {
         elements_progress_bar(canvas, 8, 36, 112, tuning_fork_state->volume);
     }
 
-    furi_string_free(tempStr);
+    string_clear(tempStr);
     furi_mutex_release(tuning_fork_state->mutex);
 }
 

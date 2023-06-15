@@ -190,7 +190,7 @@ static bool process_ducky_file(
             mj_process_ducky_script(
                 nrf24_HANDLE, addr, addr_size, rate, (char*)file_buf, plugin_state);
             FURI_LOG_D(TAG, "finished execution");
-            dolphin_deed(getRandomDeed());
+            DOLPHIN_DEED(getRandomDeed());
             loaded = true;
         } else {
             FURI_LOG_D(TAG, "load failed. file size: %d", file_size);
@@ -294,7 +294,7 @@ void start_mjthread(PluginState* plugin_state) {
 int32_t mousejacker_app(void* p) {
     UNUSED(p);
     FuriMessageQueue* event_queue = furi_message_queue_alloc(8, sizeof(PluginEvent));
-    dolphin_deed(getRandomDeed());
+    DOLPHIN_DEED(getRandomDeed());
 
     PluginState* plugin_state = malloc(sizeof(PluginState));
     mousejacker_state_init(plugin_state);

@@ -58,9 +58,9 @@ bool ibutton_scene_save_name_on_event(void* context, SceneManagerEvent event) {
                     // Nothing, do not count editing as saving
                 } else if(scene_manager_has_previous_scene(
                               ibutton->scene_manager, iButtonSceneAddType)) {
-                    dolphin_deed(DolphinDeedIbuttonAdd);
+                    DOLPHIN_DEED(DolphinDeedIbuttonAdd);
                 } else {
-                    dolphin_deed(DolphinDeedIbuttonSave);
+                    DOLPHIN_DEED(DolphinDeedIbuttonSave);
                 }
 
             } else {

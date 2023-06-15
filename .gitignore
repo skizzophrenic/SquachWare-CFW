@@ -47,10 +47,6 @@ null.d
 
 # bundle output
 /dist
-/artifacts-default
-/artifacts-ofw-anims
-/artifacts-rgb-patch
-/artifacts-extra-apps
 
 # SCons build dir
 /build

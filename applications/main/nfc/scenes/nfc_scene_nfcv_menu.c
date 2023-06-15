@@ -42,9 +42,9 @@ bool nfc_scene_nfcv_menu_on_event(void* context, SceneManagerEvent event) {
         } else if(event.event == SubmenuIndexEmulate) {
             scene_manager_next_scene(nfc->scene_manager, NfcSceneNfcVEmulate);
             if(scene_manager_has_previous_scene(nfc->scene_manager, NfcSceneSetType)) {
-                dolphin_deed(DolphinDeedNfcAddEmulate);
+                DOLPHIN_DEED(DolphinDeedNfcAddEmulate);
             } else {
-                dolphin_deed(DolphinDeedNfcEmulate);
+                DOLPHIN_DEED(DolphinDeedNfcEmulate);
             }
             consumed = true;
         } else if(event.event == SubmenuIndexInfo) {

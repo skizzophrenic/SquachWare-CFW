@@ -96,17 +96,16 @@ const char*
 
 void subghz_environment_set_protocol_registry(
     SubGhzEnvironment* instance,
-    const SubGhzProtocolRegistry* protocol_registry_items) {
+    void* protocol_registry_items) {
     furi_assert(instance);
     const SubGhzProtocolRegistry* protocol_registry = protocol_registry_items;
     instance->protocol_registry = protocol_registry;
 }
 
-const SubGhzProtocolRegistry*
-    subghz_environment_get_protocol_registry(SubGhzEnvironment* instance) {
+void* subghz_environment_get_protocol_registry(SubGhzEnvironment* instance) {
     furi_assert(instance);
     furi_assert(instance->protocol_registry);
-    return instance->protocol_registry;
+    return (void*)instance->protocol_registry;
 }
 
 const char*

@@ -333,7 +333,7 @@ int32_t tictactoe_game_app(void* p) {
     gui_add_view_port(gui, view_port, GuiLayerFullscreen);
 
     // Call dolphin deed on game start
-    dolphin_deed(DolphinDeedPluginGameStart);
+    DOLPHIN_DEED(DolphinDeedPluginGameStart);
 
     GameEvent event;
     for(bool processing = true; processing;) {

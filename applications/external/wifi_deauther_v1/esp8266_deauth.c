@@ -321,7 +321,7 @@ int32_t esp8266_deauth_app(void* p) {
 
     SWiFiDeauthApp* app = malloc(sizeof(SWiFiDeauthApp));
 
-    dolphin_deed(DolphinDeedPluginStart);
+    DOLPHIN_DEED(DolphinDeedPluginStart);
     esp8266_deauth_app_init(app);
 
     furi_hal_gpio_init_simple(app->m_GpioButtons.pinButtonUp, GpioModeOutputPushPull);

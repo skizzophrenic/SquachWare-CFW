@@ -154,7 +154,7 @@ static void tetris_game_render_callback(Canvas* const canvas, void* ctx) {
         canvas_draw_str(canvas, 4, 63, "Game Over");
 
         if(tetris_state->numLines % 8 == 0 && tetris_state->numLines != 0) {
-            dolphin_deed(getRandomDeed());
+            DOLPHIN_DEED(getRandomDeed());
         }
 
         char buffer[13];
@@ -393,7 +393,7 @@ int32_t tetris_game_app() {
     uint8_t downRepeatCounter = 0;
 
     // Call dolphin deed on game start
-    dolphin_deed(DolphinDeedPluginGameStart);
+    DOLPHIN_DEED(DolphinDeedPluginGameStart);
 
     for(bool processing = true; processing;) {
         // This 10U implicitly sets the game loop speed. downRepeatCounter relies on this value

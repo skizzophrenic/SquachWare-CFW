@@ -59,9 +59,9 @@ bool lfrfid_scene_save_name_on_event(void* context, SceneManagerEvent event) {
                 if(scene_manager_has_previous_scene(scene_manager, LfRfidSceneSavedKeyMenu)) {
                     // Nothing, do not count editing as saving
                 } else if(scene_manager_has_previous_scene(scene_manager, LfRfidSceneSaveType)) {
-                    dolphin_deed(DolphinDeedRfidAdd);
+                    DOLPHIN_DEED(DolphinDeedRfidAdd);
                 } else {
-                    dolphin_deed(DolphinDeedRfidSave);
+                    DOLPHIN_DEED(DolphinDeedRfidSave);
                 }
             } else {
                 scene_manager_search_and_switch_to_previous_scene(

@@ -67,9 +67,9 @@ bool nfc_scene_save_name_on_event(void* context, SceneManagerEvent event) {
                 if(!scene_manager_has_previous_scene(nfc->scene_manager, NfcSceneSavedMenu)) {
                     // Nothing, do not count editing as saving
                 } else if(scene_manager_has_previous_scene(nfc->scene_manager, NfcSceneSetType)) {
-                    dolphin_deed(DolphinDeedNfcAddSave);
+                    DOLPHIN_DEED(DolphinDeedNfcAddSave);
                 } else {
-                    dolphin_deed(DolphinDeedNfcSave);
+                    DOLPHIN_DEED(DolphinDeedNfcSave);
                 }
                 consumed = true;
             } else {

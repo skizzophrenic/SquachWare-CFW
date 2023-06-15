@@ -28,7 +28,6 @@ SubBruteWorker* subbrute_worker_alloc() {
     instance->context = NULL;
     instance->callback = NULL;
 
-    instance->tx_timeout_ms = SUBBRUTE_TX_TIMEOUT;
     instance->decoder_result = NULL;
     instance->transmitter = NULL;
     instance->environment = subghz_environment_alloc();
@@ -207,7 +206,6 @@ void subbrute_worker_stop(SubBruteWorker* instance) {
     furi_thread_join(instance->thread);
 
     furi_hal_subghz_set_path(FuriHalSubGhzPathIsolate);
-    furi_hal_subghz_idle();
     furi_hal_subghz_sleep();
 }
 
@@ -308,9 +306,8 @@ void subbrute_worker_set_callback(
 }
 
 void subbrute_worker_subghz_transmit(SubBruteWorker* instance, FlipperFormat* flipper_format) {
-    const uint8_t timeout = instance->tx_timeout_ms;
     while(instance->transmit_mode) {
-        furi_delay_ms(timeout);
+        furi_delay_ms(SUBBRUTE_TX_TIMEOUT);
     }
     instance->transmit_mode = true;
     if(instance->transmitter != NULL) {
@@ -321,20 +318,17 @@ void subbrute_worker_subghz_transmit(SubBruteWorker* instance, FlipperFormat* fl
         subghz_transmitter_alloc_init(instance->environment, instance->protocol_name);
     subghz_transmitter_deserialize(instance->transmitter, flipper_format);
     furi_hal_subghz_reset();
-    furi_hal_subghz_idle();
     furi_hal_subghz_load_preset(instance->preset);
     furi_hal_subghz_set_frequency_and_path(instance->frequency);
     furi_hal_subghz_start_async_tx(subghz_transmitter_yield, instance->transmitter);
 
     while(!furi_hal_subghz_is_async_tx_complete()) {
-        furi_delay_ms(timeout);
+        furi_delay_ms(SUBBRUTE_TX_TIMEOUT);
     }
     furi_hal_subghz_stop_async_tx();
 
-    //furi_hal_subghz_set_path(FuriHalSubGhzPathIsolate);
-    furi_hal_subghz_idle();
-    //furi_hal_subghz_sleep();
-    subghz_transmitter_stop(instance->transmitter);
+    furi_hal_subghz_set_path(FuriHalSubGhzPathIsolate);
+    furi_hal_subghz_sleep();
     subghz_transmitter_free(instance->transmitter);
     instance->transmitter = NULL;
 
@@ -426,7 +420,7 @@ int32_t subbrute_worker_thread(void* context) {
         instance->step++;
 
         //        furi_string_free(payload);
-        furi_delay_ms(instance->tx_timeout_ms);
+        furi_delay_ms(SUBBRUTE_TX_TIMEOUT);
     }
 
     flipper_format_free(flipper_format);
@@ -440,20 +434,4 @@ int32_t subbrute_worker_thread(void* context) {
     FURI_LOG_I(TAG, "Worker stop");
 #endif
     return 0;
-}
-
-uint8_t subbrute_worker_get_timeout(SubBruteWorker* instance) {
-    return instance->tx_timeout_ms;
-}
-
-void subbrute_worker_timeout_inc(SubBruteWorker* instance) {
-    if(instance->tx_timeout_ms < 255) {
-        instance->tx_timeout_ms++;
-    }
-}
-
-void subbrute_worker_timeout_dec(SubBruteWorker* instance) {
-    if(instance->tx_timeout_ms > 0) {
-        instance->tx_timeout_ms--;
-    }
 }

@@ -8,7 +8,7 @@ void nfc_scene_mf_classic_write_success_popup_callback(void* context) {
 
 void nfc_scene_mf_classic_write_success_on_enter(void* context) {
     Nfc* nfc = context;
-    dolphin_deed(DolphinDeedNfcSave);
+    DOLPHIN_DEED(DolphinDeedNfcSave);
 
     notification_message(nfc->notifications, &sequence_success);
 

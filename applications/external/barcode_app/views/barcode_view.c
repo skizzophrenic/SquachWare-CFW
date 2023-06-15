@@ -406,7 +406,6 @@ static void barcode_draw_callback(Canvas* canvas, void* ctx) {
             draw_code_39(canvas, data);
             break;
         case CODE128:
-        case CODE128C:
             draw_code_128(canvas, data);
             break;
         case CODABAR:

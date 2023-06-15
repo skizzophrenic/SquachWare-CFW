@@ -201,7 +201,7 @@ int32_t picopass_app(void* p) {
     UNUSED(p);
     picopass_migrate_from_old_folder();
 
-    dolphin_deed(DolphinDeedPluginStart);
+    DOLPHIN_DEED(DolphinDeedPluginStart);
     Picopass* picopass = picopass_alloc();
 
     scene_manager_next_scene(picopass->scene_manager, PicopassSceneStart);

@@ -12,7 +12,6 @@ typedef enum {
     SubBruteCustomEventTypeTransmitNotStarted,
     SubBruteCustomEventTypeTransmitCustom,
     SubBruteCustomEventTypeSaveFile,
-    SubBruteCustomEventTypeExtraSettings,
     SubBruteCustomEventTypeUpdateView,
     SubBruteCustomEventTypeChangeStepUp,
     SubBruteCustomEventTypeChangeStepDown,

@@ -279,7 +279,7 @@ bool desktop_lock_menu_input_callback(InputEvent* event, void* context) {
                 desktop_event = DesktopLockMenuEventLockShutdown;
                 break;
             case 2:
-                dolphin_deed(getRandomDeed());
+                DOLPHIN_DEED(getRandomDeed());
                 desktop_view_lock_menu_dumbmode_changed(1);
                 desktop_event = DesktopLockMenuEventExit;
                 break;
@@ -308,7 +308,7 @@ bool desktop_lock_menu_input_callback(InputEvent* event, void* context) {
                 lock_menu->save_cfw = true;
                 break;
             case DesktopLockMenuIndexDummy:
-                dolphin_deed(getRandomDeed());
+                DOLPHIN_DEED(getRandomDeed());
                 desktop_event = dummy_mode ? DesktopLockMenuEventDummyModeOff :
                                              DesktopLockMenuEventDummyModeOn;
                 break;

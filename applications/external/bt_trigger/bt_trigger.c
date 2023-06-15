@@ -19,7 +19,7 @@ __int32_t bt_trigger_app(void* p) {
     furi_hal_bt_start_advertising();
     bt_set_status_changed_callback(app->bt, bt_hid_connection_status_changed_callback, app);
 
-    dolphin_deed(DolphinDeedPluginStart);
+    DOLPHIN_DEED(DolphinDeedPluginStart);
 
     //An event
     IosTriggerEvent event;

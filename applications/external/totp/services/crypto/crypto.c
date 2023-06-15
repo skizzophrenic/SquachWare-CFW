@@ -6,10 +6,9 @@
 #include "memset_s.h"
 
 #define CRYPTO_KEY_SLOT (2)
+#define CRYPTO_VERIFY_KEY "FFF_Crypto_pass"
 #define CRYPTO_VERIFY_KEY_LENGTH (16)
 #define CRYPTO_ALIGNMENT_FACTOR (16)
-
-static const char* CRYPTO_VERIFY_KEY = "FFF_Crypto_pass";
 
 uint8_t* totp_crypto_encrypt(
     const uint8_t* plain_data,
@@ -108,7 +107,7 @@ CryptoSeedIVResult
         plugin_state->crypto_verify_data_length = CRYPTO_VERIFY_KEY_LENGTH;
 
         plugin_state->crypto_verify_data = totp_crypto_encrypt(
-            (const uint8_t*)CRYPTO_VERIFY_KEY,
+            (uint8_t*)CRYPTO_VERIFY_KEY,
             CRYPTO_VERIFY_KEY_LENGTH,
             &plugin_state->iv[0],
             &plugin_state->crypto_verify_data_length);
@@ -123,7 +122,7 @@ CryptoSeedIVResult
 
 bool totp_crypto_verify_key(const PluginState* plugin_state) {
     size_t decrypted_key_length;
-    uint8_t* decrypted_key = totp_crypto_decrypt(
+    const uint8_t* decrypted_key = totp_crypto_decrypt(
         plugin_state->crypto_verify_data,
         plugin_state->crypto_verify_data_length,
         &plugin_state->iv[0],
@@ -133,8 +132,6 @@ bool totp_crypto_verify_key(const PluginState* plugin_state) {
     for(uint8_t i = 0; i < CRYPTO_VERIFY_KEY_LENGTH && key_valid; i++) {
         if(decrypted_key[i] != CRYPTO_VERIFY_KEY[i]) key_valid = false;
     }
-
-    free(decrypted_key);
 
     return key_valid;
 }

@@ -75,7 +75,7 @@ bool ibutton_scene_read_key_menu_on_event(void* context, SceneManagerEvent event
             scene_manager_next_scene(scene_manager, iButtonSceneSaveName);
         } else if(event.event == SubmenuIndexEmulate) {
             scene_manager_next_scene(scene_manager, iButtonSceneEmulate);
-            dolphin_deed(DolphinDeedIbuttonEmulate);
+            DOLPHIN_DEED(DolphinDeedIbuttonEmulate);
         } else if(event.event == SubmenuIndexViewData) {
             scene_manager_next_scene(scene_manager, iButtonSceneViewData);
         } else if(event.event == SubmenuIndexWriteBlank) {
