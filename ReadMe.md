@@ -1,5 +1,7 @@
 ![SquachWare](https://user-images.githubusercontent.com/16942638/211815956-4dd70fca-97d8-49c5-a98b-08f2c7fa8786.jpg)
 
+# SquachWare is abandonware for the time being!  There are still some good files on it but the underlying firmware is very outdated!! I would love to resurrect the project in the future, but for now, we're on hiatus!
+
 
 # SquachWare Community Firmware
 SquachWare is a community driven firmware!  Our goal is to creat a firmware that has 98% of the functionality of other custom firmwares, but also be 100% legal in the process!  After having use all of the other custom firmwares, we realized that most people don't even use features that require unlocking the region lock, and we certainly don't want to include illegal addon files!  Enjoy a stable branch of the Developer branch of Official Firmware, packed with custom graphics, applications, badUSB files, IR files, SubGhz files and more!!!
